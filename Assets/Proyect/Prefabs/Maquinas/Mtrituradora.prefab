@@ -1,0 +1,134 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &4558814119461415671
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 39.010002
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 39.010002
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 39.010002
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -8464.45
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 30.144
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -7.491
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7343456
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.6787758
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -85.496
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 302c460d77bf57447a7ba01993cc0203, type: 2}
+    - target: {fileID: 919132149155446097, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      propertyPath: m_Name
+      value: Mtrituradora
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6268042198163311818}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5057809575973190171}
+  m_SourcePrefab: {fileID: 100100000, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+--- !u!1 &3712444491018622886 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: af11e2384b649c2498d100f25b307e4d, type: 3}
+  m_PrefabInstance: {fileID: 4558814119461415671}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6268042198163311818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3712444491018622886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee63a115a4d48a244b8f46ee424e0247, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySystem.RecyclingMachine
+  stationName: Recicladora
+  interactionDistance: 2.5
+  interactionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  tiempoProcesamiento: 3.5
+  recipes:
+  - recipeName: Lata de metal
+    description: holi
+    ingredients:
+    - item: {fileID: 11400000, guid: ab22de3e265b54743904063f9a8a74af, type: 2}
+      amount: 1
+    outputs:
+    - item: {fileID: 11400000, guid: 7854a6bcfa034b1fa6bcc90845fb0001, type: 2}
+      amount: 1
+--- !u!65 &5057809575973190171
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3712444491018622886}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.033225507, y: 0.032032862, z: 0.037267614}
+  m_Center: {x: 0.010596318, y: -0.009999998, z: 0.018633807}

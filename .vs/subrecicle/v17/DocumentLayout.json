@@ -1,0 +1,184 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\assets\\proyect\\scripts\\crafting\\selltable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|solutionrelative:assets\\proyect\\scripts\\crafting\\selltable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\assets\\proyect\\scripts\\crafting\\recyclingmachine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|solutionrelative:assets\\proyect\\scripts\\crafting\\recyclingmachine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\assets\\proyect\\scripts\\inventory\\inventoryuicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|solutionrelative:assets\\proyect\\scripts\\inventory\\inventoryuicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Library\\PackageCache\\com.unity.render-pipelines.universal@e9f15c489688\\Shaders\\Lit.shader||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Library\\PackageCache\\com.unity.render-pipelines.universal@e9f15c489688\\Shaders\\Lit.shader||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\assets\\proyect\\scripts\\inventory\\itemcategory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|solutionrelative:assets\\proyect\\scripts\\inventory\\itemcategory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\ItemCatalog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Proyect\\Scripts\\Inventory\\ItemCatalog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\assets\\proyect\\scripts\\inventory\\itemdefinition.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|solutionrelative:assets\\proyect\\scripts\\inventory\\itemdefinition.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\assets\\proyect\\scripts\\inventory\\inventoryitemui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|solutionrelative:assets\\proyect\\scripts\\inventory\\inventoryitemui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\assets\\proyect\\scripts\\inventory\\hootbarui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|solutionrelative:assets\\proyect\\scripts\\inventory\\hootbarui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\assets\\proyect\\scripts\\inventory\\hootbar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8219521C-6C7C-8A93-46D0-683E342CB5A0}|Assembly-CSharp.csproj|solutionrelative:assets\\proyect\\scripts\\inventory\\hootbar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Lit.shader",
+              "DocumentMoniker": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Library\\PackageCache\\com.unity.render-pipelines.universal@e9f15c489688\\Shaders\\Lit.shader",
+              "RelativeDocumentMoniker": "Library\\PackageCache\\com.unity.render-pipelines.universal@e9f15c489688\\Shaders\\Lit.shader",
+              "ToolTip": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Library\\PackageCache\\com.unity.render-pipelines.universal@e9f15c489688\\Shaders\\Lit.shader",
+              "RelativeToolTip": "Library\\PackageCache\\com.unity.render-pipelines.universal@e9f15c489688\\Shaders\\Lit.shader",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
+              "WhenOpened": "2026-10-09T13:32:23.879Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ItemCategory.cs",
+              "DocumentMoniker": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\ItemCategory.cs",
+              "RelativeDocumentMoniker": "Assets\\Proyect\\Scripts\\Inventory\\ItemCategory.cs",
+              "ToolTip": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\ItemCategory.cs",
+              "RelativeToolTip": "Assets\\Proyect\\Scripts\\Inventory\\ItemCategory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-30T22:55:48.289Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ItemCatalog.cs",
+              "DocumentMoniker": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\ItemCatalog.cs",
+              "RelativeDocumentMoniker": "Assets\\Proyect\\Scripts\\Inventory\\ItemCatalog.cs",
+              "ToolTip": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\ItemCatalog.cs",
+              "RelativeToolTip": "Assets\\Proyect\\Scripts\\Inventory\\ItemCatalog.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-30T22:50:58.204Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ItemDefinition.cs",
+              "DocumentMoniker": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\ItemDefinition.cs",
+              "RelativeDocumentMoniker": "Assets\\Proyect\\Scripts\\Inventory\\ItemDefinition.cs",
+              "ToolTip": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\ItemDefinition.cs",
+              "RelativeToolTip": "Assets\\Proyect\\Scripts\\Inventory\\ItemDefinition.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAowDcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-30T22:50:32.77Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "InventoryUIController.cs",
+              "DocumentMoniker": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\InventoryUIController.cs",
+              "RelativeDocumentMoniker": "Assets\\Proyect\\Scripts\\Inventory\\InventoryUIController.cs",
+              "ToolTip": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\InventoryUIController.cs",
+              "RelativeToolTip": "Assets\\Proyect\\Scripts\\Inventory\\InventoryUIController.cs",
+              "ViewState": "AgIAACACAAAAAAAAAAAUwCQBAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-30T22:38:48.128Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "RecyclingMachine.cs",
+              "DocumentMoniker": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Crafting\\RecyclingMachine.cs",
+              "RelativeDocumentMoniker": "Assets\\Proyect\\Scripts\\Crafting\\RecyclingMachine.cs",
+              "ToolTip": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Crafting\\RecyclingMachine.cs",
+              "RelativeToolTip": "Assets\\Proyect\\Scripts\\Crafting\\RecyclingMachine.cs",
+              "ViewState": "AgIAAOUAAAAAAAAAAAAUwNUAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-30T22:30:09.082Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SellTable.cs",
+              "DocumentMoniker": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Crafting\\SellTable.cs",
+              "RelativeDocumentMoniker": "Assets\\Proyect\\Scripts\\Crafting\\SellTable.cs",
+              "ToolTip": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Crafting\\SellTable.cs",
+              "RelativeToolTip": "Assets\\Proyect\\Scripts\\Crafting\\SellTable.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-30T22:25:56.327Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "HootbarUi.cs",
+              "DocumentMoniker": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\HootbarUi.cs",
+              "RelativeDocumentMoniker": "Assets\\Proyect\\Scripts\\Inventory\\HootbarUi.cs",
+              "ToolTip": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\HootbarUi.cs",
+              "RelativeToolTip": "Assets\\Proyect\\Scripts\\Inventory\\HootbarUi.cs",
+              "ViewState": "AgIAAAwBAAAAAAAAAAAAwDIBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-30T21:48:31.749Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Hootbar.cs",
+              "DocumentMoniker": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\Hootbar.cs",
+              "RelativeDocumentMoniker": "Assets\\Proyect\\Scripts\\Inventory\\Hootbar.cs",
+              "ToolTip": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\Hootbar.cs",
+              "RelativeToolTip": "Assets\\Proyect\\Scripts\\Inventory\\Hootbar.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAAAiwEoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-30T21:40:46.786Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "InventoryItemUI.cs",
+              "DocumentMoniker": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\InventoryItemUI.cs",
+              "RelativeDocumentMoniker": "Assets\\Proyect\\Scripts\\Inventory\\InventoryItemUI.cs",
+              "ToolTip": "D:\\Proyectos\\Uni\\Semillero\\Subrecicle\\subrecicle\\Assets\\Proyect\\Scripts\\Inventory\\InventoryItemUI.cs",
+              "RelativeToolTip": "Assets\\Proyect\\Scripts\\Inventory\\InventoryItemUI.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAQwDkAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-25T03:30:42.728Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\obj\Debug\Assembly-CSharp.csproj.AssemblyReference.cache
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\Temp\bin\Debug\Assembly-CSharp.dll
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\Temp\bin\Debug\Assembly-CSharp.pdb
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\obj\Debug\Assembly-CSharp.dll
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\obj\Debug\Assembly-CSharp.pdb

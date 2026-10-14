@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6db11b1b4f8f4f46ac106d0b10010001, type: 3}
+  m_Name: RecoveryItemCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySystem.ItemCatalog
+  items:
+  - {fileID: 11400000, guid: ab22de3e265b54743904063f9a8a74af, type: 2}
+  - {fileID: 11400000, guid: 7854a6bcfa034b1fa6bcc90845fb0001, type: 2}
+  - {fileID: 11400000, guid: 126a13b8cb0a46118ea81d1554400002, type: 2}
+  - {fileID: 11400000, guid: 50e17196462247eca4091cdcb2aa0003, type: 2}

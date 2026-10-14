@@ -1,0 +1,8 @@
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\Temp\bin\Debug\Assembly-CSharp-Editor.dll
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\Temp\bin\Debug\Assembly-CSharp-Editor.pdb
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\Temp\bin\Debug\Assembly-CSharp.pdb
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\obj\Debug\Assembly-CSharp-Editor.csproj.AssemblyReference.cache
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\obj\Debug\Assembly-CSharp-Editor.csproj.CoreCompileInputs.cache
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\obj\Debug\Assembly.1F1299F3.Up2Date
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\obj\Debug\Assembly-CSharp-Editor.dll
+D:\Proyectos\Uni\Semillero\Subrecicle\subrecicle\obj\Debug\Assembly-CSharp-Editor.pdb
