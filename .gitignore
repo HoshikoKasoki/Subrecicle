@@ -1,4 +1,7 @@
-# Archivos generados por Unity
+# ==================================
+# UNITY
+# ==================================
+
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -7,6 +10,30 @@
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
 
-# Archivos del sistema operativo
+# ==================================
+# VISUAL STUDIO
+# ==================================
+
+.vs/
+.vscode/
+
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+
+# ==================================
+# SISTEMA
+# ==================================
+
 .DS_Store
 Thumbs.db
+
+# ==================================
+# ARCHIVOS TEMPORALES
+# ==================================
+
+*.tmp
+*.bak
+*.log
