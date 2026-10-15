@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Proyect\Materials\Shader\Custom Toon.shader" />
+    <None Include="Assets\Proyect\Materials\Shader\Toon_Water_URP.shader" />
     <None Include="Assets\Proyect\Materials\Shader\PixelScreen.shader" />
   </ItemGroup>
   <ItemGroup>

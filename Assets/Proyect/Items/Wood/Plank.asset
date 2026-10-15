@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: Tabla de madera
   description: "Material de recuperaci\xF3n. Puede convertirse en componentes reutilizables."
   category: 0
-  size: {x: 2, y: 1}
+  size: {x: 3, y: 1}
   stackable: 0
   maxStack: 1
   sellPrice: 8

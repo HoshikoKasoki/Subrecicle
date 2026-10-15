@@ -15,6 +15,7 @@ namespace InventorySystem
         private Camera playerCamera;
         private PickupItem focusedPickup;
         private SellTable focusedSellTable;
+        private RecyclingMachine focusedRecyclingMachine;
         private Wallet wallet;
 
         public Inventory Inventory => inventory;
@@ -44,6 +45,10 @@ namespace InventorySystem
                 InteractionMessage = $"[E] RECUPERAR  {focusedPickup.DisplayName}" + (focusedPickup.Amount > 1 ? $"  x{focusedPickup.Amount}" : string.Empty);
             else if (focusedSellTable != null)
                 InteractionMessage = $"[E] VENDER OBJETOS  //  {focusedSellTable.StationName}";
+            else if (focusedRecyclingMachine != null)
+                InteractionMessage = focusedRecyclingMachine.IsProcessing
+                    ? $"{focusedRecyclingMachine.StationName}  //  PROCESANDO"
+                    : $"[E] ABRIR RECICLADORA  //  {focusedRecyclingMachine.StationName}";
             else
                 InteractionMessage = string.Empty;
 
@@ -73,6 +78,7 @@ namespace InventorySystem
         {
             focusedPickup = null;
             focusedSellTable = null;
+            focusedRecyclingMachine = null;
             if (playerCamera == null)
                 playerCamera = Camera.main;
 
@@ -93,6 +99,23 @@ namespace InventorySystem
                 focusedPickup = hit.collider.GetComponentInParent<PickupItem>();
                 if (focusedPickup == null)
                     focusedSellTable = hit.collider.GetComponentInParent<SellTable>();
+            }
+
+            if (focusedPickup != null || focusedSellTable != null)
+                return;
+
+            // Las estaciones usan la misma mirada que RecyclingMachine para que
+            // el mensaje visible y la interacción con E apunten al mismo objeto.
+            if (Physics.SphereCast(
+                ray,
+                0.12f,
+                out hit,
+                interactionDistance,
+                ~0,
+                QueryTriggerInteraction.Ignore))
+            {
+                focusedRecyclingMachine =
+                    hit.collider.GetComponentInParent<RecyclingMachine>();
             }
         }
     }

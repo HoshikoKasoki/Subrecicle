@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Material
+  m_Name: Rojo generico
   m_Shader: {fileID: 4800000, guid: 01d8760cb48722647a88fd57226c7c3b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -102,17 +102,17 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _Ambient: 0.35
+    - _Ambient: 0.466
     - _AmbientStrength: 0.35
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _ColorSteps: 9.3
+    - _ColorSteps: 24.5
     - _Cull: 2
     - _Cutoff: 0.5
-    - _DepthThreshold: 0.02
+    - _DepthThreshold: 0.015
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -125,9 +125,9 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _NormalScale: 1
-    - _NormalSteps: 7.2
+    - _NormalSteps: 7.8
     - _OcclusionStrength: 1
-    - _OutlineStrength: 0.65
+    - _OutlineStrength: 0.8
     - _OutlineWidth: 0
     - _Parallax: 0.005
     - _PixelSize: 10
@@ -135,8 +135,8 @@ Material:
     - _ReceiveShadows: 1
     - _RimFeather: 0.03
     - _RimLightInfluence: 0.5
-    - _RimPower: 4
-    - _RimStrength: 0.5
+    - _RimPower: 3.35
+    - _RimStrength: 1.33
     - _RimThreshold: 0.65
     - _ShadowFeather: 0.02
     - _ShadowOffset: 0
@@ -156,21 +156,21 @@ Material:
     - _TextureGrid: 225
     - _UseEmission: 0
     - _UseNormalMap: 0
-    - _VoxelAmount: 0
-    - _VoxelSize: 0.005
+    - _VoxelAmount: 0.054
+    - _VoxelSize: 0.099
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     m_Colors:
-    - _AmbientColor: {r: 0.17999998, g: 0.17999998, b: 0.21999997, a: 1}
-    - _BaseColor: {r: 0, g: 0.73384327, b: 0.8396226, a: 1}
+    - _AmbientColor: {r: 1, g: 0, b: 0, a: 1}
+    - _BaseColor: {r: 0.8867924, g: 0.079476655, b: 0.079476655, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ShadowColor1: {r: 0.016871154, g: 0.0129049495, b: 0.09433961, a: 1}
-    - _ShadowColor2: {r: 0.15979888, g: 0.15979888, b: 0.1792453, a: 1}
+    - _OutlineColor: {r: 0.01, g: 0.01, b: 0.01, a: 1}
+    - _RimColor: {r: 1, g: 0, b: 0.13348532, a: 1}
+    - _ShadowColor1: {r: 0.3773585, g: 0.19045925, b: 0.2545991, a: 1}
+    - _ShadowColor2: {r: 0.4433962, g: 0.2788119, b: 0.23633854, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _SpecularColor: {r: 0, g: 0.13797854, b: 0.3679245, a: 1}
+    - _SpecularColor: {r: 0.0023154854, g: 0, b: 0.2264151, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -184,6 +184,7 @@ namespace InventorySystem
             activeSellTable = sellTable;
             activeRecyclingMachine = null;
             selectedItem = null;
+            craftAmount = 1;
             OpenInventory();
         }
 
@@ -493,18 +494,40 @@ namespace InventorySystem
 
         private void IncreaseCraftAmount()
         {
-            if (activeRecyclingMachine == null || activeRecyclingMachine.IsProcessing)
+            if (activeRecyclingMachine != null)
+            {
+                if (activeRecyclingMachine.IsProcessing)
+                    return;
+
+                craftAmount = Mathf.Clamp(craftAmount + 1, 1, 99);
+                RefreshRecipeDetails();
                 return;
-            craftAmount = Mathf.Clamp(craftAmount + 1, 1, 99);
-            RefreshRecipeDetails();
+            }
+
+            if (activeSellTable != null && selectedItem != null)
+            {
+                craftAmount = Mathf.Clamp(craftAmount + 1, 1, selectedItem.Amount);
+                RefreshSellUI();
+            }
         }
 
         private void DecreaseCraftAmount()
         {
-            if (activeRecyclingMachine == null || activeRecyclingMachine.IsProcessing)
+            if (activeRecyclingMachine != null)
+            {
+                if (activeRecyclingMachine.IsProcessing)
+                    return;
+
+                craftAmount = Mathf.Clamp(craftAmount - 1, 1, 99);
+                RefreshRecipeDetails();
                 return;
-            craftAmount = Mathf.Clamp(craftAmount - 1, 1, 99);
-            RefreshRecipeDetails();
+            }
+
+            if (activeSellTable != null && selectedItem != null)
+            {
+                craftAmount = Mathf.Clamp(craftAmount - 1, 1, selectedItem.Amount);
+                RefreshSellUI();
+            }
         }
 
         private void UpdateQuantityText()
@@ -531,13 +554,27 @@ namespace InventorySystem
 
         private void RefreshSellUI()
         {
+            if (selectedItem == null)
+                craftAmount = 1;
+            else
+                craftAmount = Mathf.Clamp(craftAmount, 1, selectedItem.Amount);
+
+            if (minusButton != null)
+                minusButton.interactable = selectedItem != null && craftAmount > 1;
+            if (plusButton != null)
+                plusButton.interactable = selectedItem != null && craftAmount < (selectedItem == null ? 1 : selectedItem.Amount);
+
+            UpdateQuantityText();
+
             if (actionButton != null)
             {
                 actionButton.gameObject.SetActive(selectedItem != null);
                 actionButton.interactable = selectedItem != null;
                 Text buttonText = actionButton.GetComponentInChildren<Text>();
                 if (buttonText != null)
-                    buttonText.text = "VENDER LOTE";
+                    buttonText.text = selectedItem == null
+                        ? "VENDER LOTE"
+                        : "VENDER " + craftAmount;
             }
             RefreshDetails();
         }
@@ -547,9 +584,14 @@ namespace InventorySystem
             if (activeSellTable == null || selectedItem == null || wallet == null)
                 return;
 
-            if (activeSellTable.TrySell(inventory, wallet, selectedItem, out _))
+            int amountToSell = Mathf.Clamp(craftAmount, 1, selectedItem.Amount);
+            int remainingAfterSale = selectedItem.Amount - amountToSell;
+            if (activeSellTable.TrySellAmount(inventory, wallet, selectedItem, amountToSell, out _))
             {
-                selectedItem = null;
+                if (remainingAfterSale <= 0)
+                    selectedItem = null;
+                else
+                    craftAmount = Mathf.Clamp(craftAmount, 1, remainingAfterSale);
                 RefreshInventory();
             }
         }
@@ -562,11 +604,20 @@ namespace InventorySystem
             Vector2Int cell = new Vector2Int(cellIndex % inventory.Width, cellIndex / inventory.Width);
             ItemInstance clicked = inventory.GetItemAtCell(cell);
             if (selectedItem == null)
+            {
                 selectedItem = clicked;
+                craftAmount = 1;
+            }
             else if (clicked == selectedItem)
+            {
                 selectedItem = null;
+                craftAmount = 1;
+            }
             else if (clicked != null)
+            {
                 selectedItem = clicked;
+                craftAmount = 1;
+            }
             else
                 inventory.TryMoveItem(selectedItem, cell, selectedItem.Rotated);
             RefreshInventory();

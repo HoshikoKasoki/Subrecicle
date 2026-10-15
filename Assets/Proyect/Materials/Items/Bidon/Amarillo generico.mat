@@ -20,12 +20,13 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Material 4
+  m_Name: Amarillo generico
   m_Shader: {fileID: 4800000, guid: 01d8760cb48722647a88fd57226c7c3b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _RECEIVESHADOWS_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -38,7 +39,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: b9c48689f3426a44ca1e2e604ac8f58e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -140,7 +141,7 @@ Material:
     - _RimFeather: 0.03
     - _RimLightInfluence: 0.5
     - _RimPower: 4
-    - _RimStrength: 0.66
+    - _RimStrength: 1.24
     - _RimThreshold: 0.65
     - _ShadowFeather: 0.02
     - _ShadowOffset: 0
@@ -168,17 +169,17 @@ Material:
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     m_Colors:
-    - _AmbientColor: {r: 0.764151, g: 0.764151, b: 0.764151, a: 1}
-    - _BaseColor: {r: 0.509434, g: 0.42412168, b: 0.12255251, a: 1}
+    - _AmbientColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 0.6132076, g: 0.6132076, b: 0.6132076, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MidColor: {r: 0.54999995, g: 0.56999993, b: 0.68, a: 1}
     - _OutlineColor: {r: 0.01, g: 0.01, b: 0.01, a: 1}
-    - _RimColor: {r: 0.2830189, g: 0.07521419, b: 0, a: 1}
+    - _RimColor: {r: 1, g: 0.95084643, b: 0, a: 1}
     - _ShadowColor: {r: 0.17999998, g: 0.18999997, b: 0.25999996, a: 1}
     - _ShadowColor1: {r: 0.011764706, g: 0.09411765, b: 0.018373316, a: 1}
     - _ShadowColor2: {r: 0.16078432, g: 0.18039216, b: 0.16244748, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _SpecularColor: {r: 1, g: 0.053242754, b: 0, a: 1}
+    - _SpecularColor: {r: 0, g: 1, b: 0.24680662, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

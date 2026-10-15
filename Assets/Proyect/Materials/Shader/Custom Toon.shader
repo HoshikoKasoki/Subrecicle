@@ -103,13 +103,79 @@ Shader "Rii/Toon Lit Shadows"
                 clip(GetSurfaceAlpha(uv) - _Cutoff);
             #endif
         }
+
+        // The depth/normal prepass must use the EXACT same geometry and alpha clipping
+        // as the forward and DepthOnly passes. Otherwise depth-based water foam cannot
+        // detect the object when URP uses a DepthNormals prepass (e.g. SSAO).
+        struct ToonDepthNormalsAttributes
+        {
+            float4 positionOS : POSITION;
+            half3 normalOS : NORMAL;
+            half4 tangentOS : TANGENT;
+            float2 uv : TEXCOORD0;
+            UNITY_VERTEX_INPUT_INSTANCE_ID
+        };
+
+        struct ToonDepthNormalsVaryings
+        {
+            float4 positionCS : SV_POSITION;
+            half3 normalWS : TEXCOORD0;
+            half3 tangentWS : TEXCOORD1;
+            half3 bitangentWS : TEXCOORD2;
+            float2 uv : TEXCOORD3;
+            UNITY_VERTEX_INPUT_INSTANCE_ID
+            UNITY_VERTEX_OUTPUT_STEREO
+        };
+
+        ToonDepthNormalsVaryings ToonDepthNormalsVert(ToonDepthNormalsAttributes v)
+        {
+            ToonDepthNormalsVaryings o = (ToonDepthNormalsVaryings)0;
+            UNITY_SETUP_INSTANCE_ID(v);
+            UNITY_TRANSFER_INSTANCE_ID(v, o);
+            UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+            VertexPositionInputs p = GetVertexPositionInputs(v.positionOS.xyz);
+            VertexNormalInputs n = GetVertexNormalInputs(v.normalOS, v.tangentOS);
+            o.positionCS = p.positionCS;
+            o.normalWS = n.normalWS;
+            o.tangentWS = n.tangentWS;
+            o.bitangentWS = n.bitangentWS;
+            o.uv = TRANSFORM_TEX(v.uv, _BaseMap);
+            return o;
+        }
+
+        half4 ToonDepthNormalsFrag(ToonDepthNormalsVaryings i) : SV_Target
+        {
+            UNITY_SETUP_INSTANCE_ID(i);
+            UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
+            ApplyAlphaClip(i.uv);
+
+            half3 N = normalize(i.normalWS);
+            #if defined(_NORMALMAP)
+                half3 normalTS = UnpackNormalScale(
+                    SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, i.uv),
+                    _NormalStrength);
+                N = normalize(normalTS.x * normalize(i.tangentWS)
+                            + normalTS.y * normalize(i.bitangentWS)
+                            + normalTS.z * N);
+            #endif
+
+            // URP's _CameraNormalsTexture uses world-space normals. Support
+            // octahedral packing when Accurate G-buffer Normals is enabled.
+            #if defined(_GBUFFER_NORMALS_OCT)
+                float2 oct = PackNormalOctQuadEncode(N);
+                float2 remappedOct = saturate(oct * 0.5 + 0.5);
+                return half4(PackFloat2To888(remappedOct), 0);
+            #else
+                return half4(N, 0);
+            #endif
+        }
         ENDHLSL
 
         // Main surface: reacts to the Directional Light and receives real shadows.
         Pass
         {
             Name "ForwardLit"
-            Tags { "LightMode" = "UniversalForward" }
+            Tags { "LightMode" = "UniversalForwardOnly" }
             Cull [_Cull]
             ZWrite On
             ZTest LEqual
@@ -395,6 +461,48 @@ Shader "Rii/Toon Lit Shadows"
                 ApplyAlphaClip(i.uv);
                 return 0;
             }
+            ENDHLSL
+        }
+
+        // URP's depth+normals prepass (Forward/Forward+ on versions requesting
+        // DepthNormals; for example when SSAO reads camera normals).
+        Pass
+        {
+            Name "DepthNormals"
+            Tags { "LightMode" = "DepthNormals" }
+            Cull [_Cull]
+            ZWrite On
+            ZTest LEqual
+
+            HLSLPROGRAM
+            #pragma target 3.5
+            #pragma vertex ToonDepthNormalsVert
+            #pragma fragment ToonDepthNormalsFrag
+            #pragma multi_compile_instancing
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _NORMALMAP
+            #pragma multi_compile_fragment _ _GBUFFER_NORMALS_OCT
+            ENDHLSL
+        }
+
+        // URP uses DepthNormalsOnly with UniversalForwardOnly in Deferred,
+        // and in some URP versions for normal/depth prepasses.
+        Pass
+        {
+            Name "DepthNormalsOnly"
+            Tags { "LightMode" = "DepthNormalsOnly" }
+            Cull [_Cull]
+            ZWrite On
+            ZTest LEqual
+
+            HLSLPROGRAM
+            #pragma target 3.5
+            #pragma vertex ToonDepthNormalsVert
+            #pragma fragment ToonDepthNormalsFrag
+            #pragma multi_compile_instancing
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _NORMALMAP
+            #pragma multi_compile_fragment _ _GBUFFER_NORMALS_OCT
             ENDHLSL
         }
     }

@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Material 7
+  m_Name: Fuccia generico
   m_Shader: {fileID: 4800000, guid: 01d8760cb48722647a88fd57226c7c3b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -124,7 +124,7 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
-    - _NormalScale: 0.05
+    - _NormalScale: 1
     - _NormalSteps: 7.2
     - _OcclusionStrength: 1
     - _OutlineStrength: 0.65
@@ -136,7 +136,7 @@ Material:
     - _RimFeather: 0.03
     - _RimLightInfluence: 0.5
     - _RimPower: 4
-    - _RimStrength: 1.24
+    - _RimStrength: 1.08
     - _RimThreshold: 0.65
     - _ShadowFeather: 0.02
     - _ShadowOffset: 0
@@ -163,14 +163,14 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _AmbientColor: {r: 1, g: 1, b: 1, a: 1}
-    - _BaseColor: {r: 0.9085845, g: 1, b: 0, a: 1}
+    - _BaseColor: {r: 0.6981132, g: 0.21404415, b: 0.5820309, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0.01, g: 0.01, b: 0.01, a: 1}
-    - _RimColor: {r: 1, g: 0.95084643, b: 0, a: 1}
-    - _ShadowColor1: {r: 0.011764706, g: 0.09411765, b: 0.018373316, a: 1}
-    - _ShadowColor2: {r: 0.16078432, g: 0.18039216, b: 0.16244748, a: 1}
+    - _RimColor: {r: 0.48235294, g: 0.13333336, b: 0.4629865, a: 1}
+    - _ShadowColor1: {r: 0.15619436, g: 0.15619436, b: 0.16981131, a: 1}
+    - _ShadowColor2: {r: 0.11372549, g: 0.0039215707, b: 0.006050209, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _SpecularColor: {r: 0, g: 1, b: 0.24680662, a: 1}
+    - _SpecularColor: {r: 1, g: 0.043622322, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
