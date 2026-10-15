@@ -61,6 +61,8 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.3.22f1\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Proyect\Scripts\Mar\UnderwaterCameraEffect.cs" />
+    <Compile Include="Assets\Proyect\Scripts\Mar\WaterVolume.cs" />
     <Compile Include="Assets\Proyect\Scripts\Crafting\SellTable.cs" />
     <Compile Include="Assets\Proyect\Scripts\Player\Wallet.cs" />
     <Compile Include="Assets\Proyect\Scripts\Inventory\InventoryItemUI.cs" />
@@ -69,6 +71,7 @@
     <Compile Include="Assets\Proyect\Scripts\Inventory\ItemIDUtility.cs" />
     <Compile Include="Assets\Proyect\Scripts\Inventory\InventoryUIController.cs" />
     <Compile Include="Assets\Proyect\Scripts\Recolection\PickupItem.cs" />
+    <Compile Include="Assets\Proyect\Scripts\Mar\WaterBuoyancy.cs" />
     <Compile Include="Assets\Proyect\Scripts\Inventory\ItemCategory.cs" />
     <Compile Include="Assets\Proyect\Scripts\Inventory\HootbarUi.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />

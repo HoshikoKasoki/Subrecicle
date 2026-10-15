@@ -97,6 +97,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c0a66d697f13c5842bb71abdf08bc70a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3673669567776947840}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c0a66d697f13c5842bb71abdf08bc70a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7415478988629883347}
   m_SourcePrefab: {fileID: 100100000, guid: c0a66d697f13c5842bb71abdf08bc70a, type: 3}
 --- !u!1 &6714303316470849198 stripped
 GameObject:
@@ -170,3 +173,18 @@ MonoBehaviour:
   bobHeight: 0.12
   bobSpeed: 2
   rotationSpeed: 65
+--- !u!114 &7415478988629883347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6714303316470849198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a8cbd59652ab564ca0f2e60db086458, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterBuoyancy
+  bodyCollider: {fileID: 5445525914551725894}
+  waterDamping: 2
+  waterAngularDamping: 1.5
