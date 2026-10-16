@@ -1,134 +1,87 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 namespace InventorySystem
 {
     /// <summary>
-    /// Interfaz autocontenida del inventario.
-    ///
-    /// MODOS:
-    /// 1. Inventario normal
-    /// 2. Mesa de venta
-    /// 3. Recicladora / fabricación
-    ///
-    /// El panel de recetas SOLO aparece en modo recicladora.
-    ///
-    /// En inventario normal y venta:
-    /// - Inventario centrado
-    /// - Panel de detalles centrado junto al inventario
-    ///
-    /// En recicladora:
-    /// - Inventario a la izquierda
-    /// - Lista de recetas en el centro
-    /// - Detalles a la derecha
+    /// Controls the inventory UI authored in the scene.
+    /// This component never creates Canvas, panels, buttons, text or images.
     /// </summary>
     public class InventoryUIController : MonoBehaviour
     {
-        // =========================================================
-        // DATA
-        // =========================================================
-
         [Header("Data")]
-        [SerializeField]
-        private Inventory inventory;
+        [SerializeField] private Inventory inventory;
 
-        [Header("Legacy scene reference (optional)")]
-        [SerializeField]
-        private GameObject inventoryPanel;
+        [Header("Scene UI")]
+        [SerializeField] private GameObject shadePanel;
+        [SerializeField] private GameObject casePanel;
+        [SerializeField] private GameObject recipePanelObject;
+        [SerializeField] private RectTransform grid;
+        [SerializeField] private RectTransform detailsPanelRect;
 
-        // =========================================================
-        // DIMENSIONES INVENTARIO
-        // =========================================================
+        [Header("Scene text")]
+        [SerializeField] private Text titleText;
+        [SerializeField] private Text modeText;
+        [SerializeField] private Text detailsText;
+        [SerializeField] private Text infoTitle;
+        [SerializeField] private Text interactionText;
+        [SerializeField] private Text quantityText;
 
-        // El Inventory debe estar configurado como 4x4.
-        private const float CellSize = 92f;
-        private const float Gap = 5f;
+        [Header("Scene buttons")]
+        [SerializeField] private Button actionButton;
+        [SerializeField] private Button minusButton;
+        [SerializeField] private Button plusButton;
+        [SerializeField] private Button[] inventoryCells;
+        [SerializeField] private Image[] inventoryCellImages;
+        [SerializeField] private Button[] recipeButtons;
+        [SerializeField] private Text[] recipeButtonLabels;
 
-        // =========================================================
-        // UI GENERAL
-        // =========================================================
+        [Header("Scene item visuals")]
+        [SerializeField] private RectTransform[] itemVisuals;
+        [SerializeField] private Image[] itemImages;
+        [SerializeField] private Image[] itemIcons;
+        [SerializeField] private Outline[] itemOutlines;
+        [SerializeField] private Text[] itemLabels;
+        [SerializeField] private Text[] itemCounts;
 
-        private GameObject runtimeCanvas;
-        private GameObject shadePanel;
-        private GameObject casePanel;
-
-        private RectTransform grid;
-
-        private Text titleText;
-        private Text modeText;
-        private Text detailsText;
-        private Text infoTitle;
-        private Text interactionText;
-
-        // =========================================================
-        // PANEL RECETAS
-        // =========================================================
-
-        private GameObject recipePanelObject;
-        private RectTransform recipeContent;
-        private ScrollRect recipeScroll;
-
-        // =========================================================
-        // BOTONES
-        // =========================================================
-
-        private Button actionButton;
-        private Button minusButton;
-        private Button plusButton;
-
-        // =========================================================
-        // ESTADO
-        // =========================================================
+        [Header("Layout")]
+        [SerializeField] private float cellSize = 92f;
+        [SerializeField] private float cellGap = 5f;
+        [SerializeField] private Vector2 normalGridPosition = new Vector2(145f, -125f);
+        [SerializeField] private Vector2 recycleGridPosition = new Vector2(30f, -125f);
+        [SerializeField] private Vector2 normalDetailsPosition = new Vector2(-145f, -125f);
+        [SerializeField] private Vector2 recycleDetailsPosition = new Vector2(-30f, -125f);
+        [SerializeField] private Vector2 detailsSize = new Vector2(350f, 450f);
 
         private ItemInstance selectedItem;
-
         private PlayerInventoryController playerInventory;
         private FirstPersonController movement;
         private Wallet wallet;
-
         private SellTable activeSellTable;
         private RecyclingMachine activeRecyclingMachine;
-
-        private int selectedRecipeIndex = 0;
+        private int selectedRecipeIndex;
         private int craftAmount = 1;
 
-        public bool IsOpen
-        {
-            get;
-            private set;
-        }
-
-        // =========================================================
-        // UNITY
-        // =========================================================
+        public bool IsOpen { get; private set; }
 
         private void Awake()
         {
             if (inventory == null)
                 inventory = GetComponent<Inventory>();
 
-            playerInventory =
-                GetComponent<PlayerInventoryController>();
+            playerInventory = GetComponent<PlayerInventoryController>();
+            movement = GetComponent<FirstPersonController>();
+            wallet = GetComponent<Wallet>();
 
-            movement =
-                GetComponent<FirstPersonController>();
-
-            wallet =
-                GetComponent<Wallet>();
+            BindSceneButtons();
+            ValidateSceneUi();
         }
 
         private void Start()
         {
             if (wallet == null)
                 wallet = GetComponent<Wallet>();
-
-            if (inventoryPanel != null)
-                inventoryPanel.SetActive(false);
-
-            BuildView();
 
             CloseInventory();
         }
@@ -150,64 +103,25 @@ namespace InventorySystem
             if (Keyboard.current == null)
                 return;
 
-            // =====================================================
-            // TAB / ESC
-            // =====================================================
-
-            if (
-                Keyboard.current.tabKey.wasPressedThisFrame ||
-                (
-                    Keyboard.current.escapeKey.wasPressedThisFrame &&
-                    IsOpen
-                )
-            )
+            if (Keyboard.current.tabKey.wasPressedThisFrame ||
+                (Keyboard.current.escapeKey.wasPressedThisFrame && IsOpen))
             {
                 ToggleInventory();
             }
 
-            // =====================================================
-            // ROTAR
-            // =====================================================
-
-            if (
-                IsOpen &&
-                Keyboard.current.rKey.wasPressedThisFrame
-            )
-            {
+            if (IsOpen && Keyboard.current.rKey.wasPressedThisFrame)
                 RotateSelected();
+
+            if (!IsOpen && interactionText != null)
+            {
+                interactionText.text = playerInventory == null
+                    ? string.Empty
+                    : playerInventory.InteractionMessage;
             }
 
-            // =====================================================
-            // MENSAJE DE INTERACCIÓN
-            // =====================================================
-
-            if (
-                !IsOpen &&
-                interactionText != null
-            )
-            {
-                interactionText.text =
-                    playerInventory == null
-                        ? string.Empty
-                        : playerInventory.InteractionMessage;
-            }
-
-            // =====================================================
-            // RECICLADORA
-            // =====================================================
-
-            if (
-                IsOpen &&
-                activeRecyclingMachine != null
-            )
-            {
+            if (IsOpen && activeRecyclingMachine != null)
                 RefreshRecipeDetails();
-            }
         }
-
-        // =========================================================
-        // INVENTARIO
-        // =========================================================
 
         public void ToggleInventory()
         {
@@ -219,2383 +133,562 @@ namespace InventorySystem
 
         public void OpenInventory()
         {
-            if (
-                inventory == null ||
-                casePanel == null
-            )
-            {
+            if (inventory == null || casePanel == null)
                 return;
-            }
 
             IsOpen = true;
-
             if (shadePanel != null)
                 shadePanel.SetActive(true);
-
             casePanel.SetActive(true);
-
-            // Aplicar distribución correspondiente.
             UpdateLayoutForCurrentMode();
 
             if (interactionText != null)
                 interactionText.gameObject.SetActive(false);
-
             if (movement != null)
                 movement.SetInputLocked(true);
 
-            Cursor.lockState =
-                CursorLockMode.None;
-
+            Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-
             RefreshInventory();
         }
 
         public void CloseInventory()
         {
             IsOpen = false;
-
             activeSellTable = null;
             activeRecyclingMachine = null;
-
             selectedItem = null;
-
             selectedRecipeIndex = 0;
             craftAmount = 1;
 
-            // Siempre ocultar recetas al cerrar.
             if (recipePanelObject != null)
                 recipePanelObject.SetActive(false);
-
             if (shadePanel != null)
                 shadePanel.SetActive(false);
-
             if (casePanel != null)
                 casePanel.SetActive(false);
-
             if (interactionText != null)
                 interactionText.gameObject.SetActive(true);
-
             if (movement != null)
                 movement.SetInputLocked(false);
 
-            Cursor.lockState =
-                CursorLockMode.Locked;
-
+            Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
 
-        // =========================================================
-        // MODO VENTA
-        // =========================================================
-
-        public void OpenSellMode(
-            SellTable sellTable)
+        public void OpenSellMode(SellTable sellTable)
         {
             if (sellTable == null)
                 return;
 
-            if (wallet == null)
-                wallet = GetComponent<Wallet>();
-
-            activeSellTable =
-                sellTable;
-
-            activeRecyclingMachine =
-                null;
-
+            activeSellTable = sellTable;
+            activeRecyclingMachine = null;
             selectedItem = null;
-
-            // Venta = distribución normal.
-            if (recipePanelObject != null)
-                recipePanelObject.SetActive(false);
-
+            craftAmount = 1;
             OpenInventory();
         }
 
-        // =========================================================
-        // MODO RECICLAJE
-        // =========================================================
-
-        public void OpenRecycleMode(
-            RecyclingMachine machine)
+        public void OpenRecycleMode(RecyclingMachine machine)
         {
             if (machine == null)
                 return;
 
-            activeSellTable =
-                null;
-
-            activeRecyclingMachine =
-                machine;
-
-            selectedItem =
-                null;
-
-            selectedRecipeIndex =
-                machine.RecipeCount > 0
-                    ? 0
-                    : -1;
-
+            activeSellTable = null;
+            activeRecyclingMachine = machine;
+            selectedItem = null;
+            selectedRecipeIndex = machine.RecipeCount > 0 ? 0 : -1;
             craftAmount = 1;
-
             OpenInventory();
         }
 
-        // =========================================================
-        // DISTRIBUCIÓN DE LA INTERFAZ
-        // =========================================================
+        private void BindSceneButtons()
+        {
+            if (minusButton != null)
+                minusButton.onClick.AddListener(DecreaseCraftAmount);
+            if (plusButton != null)
+                plusButton.onClick.AddListener(IncreaseCraftAmount);
+            if (actionButton != null)
+                actionButton.onClick.AddListener(ActionSelected);
+
+            if (inventoryCells != null)
+            {
+                for (int i = 0; i < inventoryCells.Length; i++)
+                {
+                    int cellIndex = i;
+                    if (inventoryCells[i] != null)
+                        inventoryCells[i].onClick.AddListener(() => ClickCell(cellIndex));
+                }
+            }
+
+            if (recipeButtons != null)
+            {
+                for (int i = 0; i < recipeButtons.Length; i++)
+                {
+                    int recipeIndex = i;
+                    if (recipeButtons[i] != null)
+                        recipeButtons[i].onClick.AddListener(() => SelectRecipe(recipeIndex));
+                }
+            }
+        }
+
+        private void ValidateSceneUi()
+        {
+            if (inventoryCells == null || inventoryCells.Length < inventory.Capacity)
+                Debug.LogWarning("InventoryUIController necesita las 16 celdas físicas de la escena.", this);
+            if (grid == null || casePanel == null || detailsText == null)
+                Debug.LogWarning("InventoryUIController tiene referencias de UI de escena incompletas.", this);
+        }
 
         private void UpdateLayoutForCurrentMode()
         {
-            if (grid == null)
-                return;
-
-            // =====================================================
-            // INVENTARIO NORMAL / VENTA
-            // =====================================================
-
-            if (activeRecyclingMachine == null)
-            {
-                // -------------------------------------------------
-                // Inventario centrado.
-                //
-                // Panel: 1120 px
-                // Grid: aprox. 383 px
-                // Detalles: 350 px
-                //
-                // El conjunto queda centrado.
-                // -------------------------------------------------
-
-                grid.anchoredPosition =
-                    new Vector2(
-                        145f,
-                        -125f
-                    );
-
-                // -------------------------------------------------
-                // Detalles a la derecha del inventario.
-                // -------------------------------------------------
-
-                if (detailsPanelRect != null)
-                {
-                    SetRect(
-                        detailsPanelRect,
-                        new Vector2(
-                            -145f,
-                            -125f
-                        ),
-                        new Vector2(
-                            350f,
-                            450f
-                        ),
-                        new Vector2(
-                            1f,
-                            1f
-                        )
-                    );
-                }
-
-                // No hay lista de recetas.
-                if (recipePanelObject != null)
-                    recipePanelObject.SetActive(false);
-
-                return;
-            }
-
-            // =====================================================
-            // RECICLADORA
-            // =====================================================
-
-            // -----------------------------------------------------
-            // Inventario a la izquierda.
-            // -----------------------------------------------------
-
-            grid.anchoredPosition =
-                new Vector2(
-                    30f,
-                    -125f
-                );
-
-            // -----------------------------------------------------
-            // Panel de recetas.
-            // -----------------------------------------------------
-
-            if (recipePanelObject != null)
-            {
-                recipePanelObject.SetActive(true);
-            }
-
-            // -----------------------------------------------------
-            // Detalles a la derecha.
-            // -----------------------------------------------------
+            bool recycleMode = activeRecyclingMachine != null;
+            if (grid != null)
+                grid.anchoredPosition = recycleMode ? recycleGridPosition : normalGridPosition;
 
             if (detailsPanelRect != null)
             {
-                SetRect(
-                    detailsPanelRect,
-                    new Vector2(
-                        -30f,
-                        -125f
-                    ),
-                    new Vector2(
-                        350f,
-                        450f
-                    ),
-                    new Vector2(
-                        1f,
-                        1f
-                    )
-                );
+                detailsPanelRect.anchoredPosition = recycleMode
+                    ? recycleDetailsPosition
+                    : normalDetailsPosition;
+                detailsPanelRect.sizeDelta = detailsSize;
             }
+
+            if (recipePanelObject != null)
+                recipePanelObject.SetActive(recycleMode);
         }
-
-        // =========================================================
-        // PANEL DE DETALLES
-        // =========================================================
-
-        private RectTransform detailsPanelRect;
-
-        // =========================================================
-        // BUILD UI
-        // =========================================================
-
-        private void BuildView()
-        {
-            if (runtimeCanvas != null)
-                return;
-
-            EnsureEventSystem();
-
-            // =====================================================
-            // CANVAS
-            // =====================================================
-
-            runtimeCanvas =
-                new GameObject(
-                    "Resident Inventory UI",
-                    typeof(Canvas),
-                    typeof(CanvasScaler),
-                    typeof(GraphicRaycaster)
-                );
-
-            Canvas canvas =
-                runtimeCanvas.GetComponent<Canvas>();
-
-            canvas.renderMode =
-                RenderMode.ScreenSpaceOverlay;
-
-            canvas.sortingOrder =
-                100;
-
-            CanvasScaler scaler =
-                runtimeCanvas.GetComponent<CanvasScaler>();
-
-            scaler.uiScaleMode =
-                CanvasScaler.ScaleMode.ScaleWithScreenSize;
-
-            scaler.referenceResolution =
-                new Vector2(
-                    1920f,
-                    1080f
-                );
-
-            scaler.matchWidthOrHeight =
-                0.5f;
-
-            // =====================================================
-            // FONDO
-            // =====================================================
-
-            Image shade =
-                CreateImage(
-                    runtimeCanvas.transform,
-                    "Dimmer",
-                    new Color(
-                        0.015f,
-                        0.02f,
-                        0.02f,
-                        0.90f
-                    )
-                );
-
-            shadePanel =
-                shade.gameObject;
-
-            Stretch(
-                shade.rectTransform
-            );
-
-            // =====================================================
-            // PANEL PRINCIPAL
-            // =====================================================
-
-            casePanel =
-                CreateImage(
-                    runtimeCanvas.transform,
-                    "Inventory Case",
-                    new Color(
-                        0.07f,
-                        0.09f,
-                        0.085f,
-                        0.985f
-                    )
-                ).gameObject;
-
-            RectTransform panel =
-                casePanel.GetComponent<RectTransform>();
-
-            panel.anchorMin =
-                panel.anchorMax =
-                new Vector2(
-                    0.5f,
-                    0.5f
-                );
-
-            panel.pivot =
-                new Vector2(
-                    0.5f,
-                    0.5f
-                );
-
-            panel.sizeDelta =
-                new Vector2(
-                    1120f,
-                    650f
-                );
-
-            // =====================================================
-            // ACCENT
-            // =====================================================
-
-            Image accent =
-                CreateImage(
-                    casePanel.transform,
-                    "Accent",
-                    new Color(
-                        0.38f,
-                        0.78f,
-                        0.42f,
-                        1f
-                    )
-                );
-
-            SetRect(
-                accent.rectTransform,
-                new Vector2(
-                    26f,
-                    -26f
-                ),
-                new Vector2(
-                    1068f,
-                    3f
-                ),
-                new Vector2(
-                    0f,
-                    1f
-                )
-            );
-
-            // =====================================================
-            // TÍTULO
-            // =====================================================
-
-            titleText =
-                CreateText(
-                    casePanel.transform,
-                    "INVENTARIO",
-                    30,
-                    TextAnchor.UpperLeft,
-                    new Color(
-                        0.92f,
-                        0.95f,
-                        0.91f
-                    )
-                );
-
-            SetRect(
-                titleText.rectTransform,
-                new Vector2(
-                    28f,
-                    -42f
-                ),
-                new Vector2(
-                    1050f,
-                    40f
-                ),
-                new Vector2(
-                    0f,
-                    1f
-                )
-            );
-
-            // =====================================================
-            // MODO
-            // =====================================================
-
-            modeText =
-                CreateText(
-                    casePanel.transform,
-                    "MALETÍN DE RECUPERACIÓN",
-                    13,
-                    TextAnchor.UpperLeft,
-                    new Color(
-                        0.48f,
-                        0.62f,
-                        0.52f
-                    )
-                );
-
-            SetRect(
-                modeText.rectTransform,
-                new Vector2(
-                    30f,
-                    -82f
-                ),
-                new Vector2(
-                    1050f,
-                    24f
-                ),
-                new Vector2(
-                    0f,
-                    1f
-                )
-            );
-
-            // =====================================================
-            // INVENTARIO
-            // =====================================================
-
-            grid =
-                new GameObject(
-                    "Inventory Grid",
-                    typeof(RectTransform)
-                ).GetComponent<RectTransform>();
-
-            grid.SetParent(
-                casePanel.transform,
-                false
-            );
-
-            grid.anchorMin =
-                grid.anchorMax =
-                new Vector2(
-                    0f,
-                    1f
-                );
-
-            grid.pivot =
-                new Vector2(
-                    0f,
-                    1f
-                );
-
-            // Posición inicial.
-            // UpdateLayoutForCurrentMode() la cambiará
-            // según el modo.
-            grid.anchoredPosition =
-                new Vector2(
-                    145f,
-                    -125f
-                );
-
-            // =====================================================
-            // PANEL DE RECETAS
-            // =====================================================
-
-            Image recipePanel =
-                CreateImage(
-                    casePanel.transform,
-                    "Recipe Panel",
-                    new Color(
-                        0.11f,
-                        0.14f,
-                        0.13f,
-                        1f
-                    )
-                );
-
-            recipePanelObject =
-                recipePanel.gameObject;
-
-            // 20 px más a la derecha.
-            SetRect(
-                recipePanel.rectTransform,
-                new Vector2(
-                    455f,
-                    -125f
-                ),
-                new Vector2(
-                    250f,
-                    450f
-                ),
-                new Vector2(
-                    0f,
-                    1f
-                )
-            );
-
-            Text recipeTitle =
-                CreateText(
-                    recipePanel.transform,
-                    "RECETAS",
-                    14,
-                    TextAnchor.UpperLeft,
-                    new Color(
-                        0.4f,
-                        0.78f,
-                        0.45f
-                    )
-                );
-
-            SetRect(
-                recipeTitle.rectTransform,
-                new Vector2(
-                    16f,
-                    -20f
-                ),
-                new Vector2(
-                    215f,
-                    28f
-                ),
-                new Vector2(
-                    0f,
-                    1f
-                )
-            );
-
-            // =====================================================
-            // VIEWPORT
-            // =====================================================
-
-            GameObject viewportObject =
-                new GameObject(
-                    "Recipe Viewport",
-                    typeof(RectTransform),
-                    typeof(Image),
-                    typeof(RectMask2D)
-                );
-
-            viewportObject.transform.SetParent(
-                recipePanel.transform,
-                false
-            );
-
-            RectTransform viewport =
-                viewportObject.GetComponent<RectTransform>();
-
-            SetRect(
-                viewport,
-                new Vector2(
-                    10f,
-                    -50f
-                ),
-                new Vector2(
-                    230f,
-                    385f
-                ),
-                new Vector2(
-                    0f,
-                    1f
-                )
-            );
-
-            viewport.GetComponent<Image>().color =
-                new Color(
-                    0.06f,
-                    0.08f,
-                    0.075f,
-                    1f
-                );
-
-            // =====================================================
-            // CONTENT
-            // =====================================================
-
-            GameObject content =
-                new GameObject(
-                    "Recipe Content",
-                    typeof(RectTransform),
-                    typeof(VerticalLayoutGroup),
-                    typeof(ContentSizeFitter)
-                );
-
-            content.transform.SetParent(
-                viewport.transform,
-                false
-            );
-
-            recipeContent =
-                content.GetComponent<RectTransform>();
-
-            recipeContent.anchorMin =
-                new Vector2(
-                    0f,
-                    1f
-                );
-
-            recipeContent.anchorMax =
-                new Vector2(
-                    1f,
-                    1f
-                );
-
-            recipeContent.pivot =
-                new Vector2(
-                    0.5f,
-                    1f
-                );
-
-            recipeContent.anchoredPosition =
-                Vector2.zero;
-
-            recipeContent.sizeDelta =
-                new Vector2(
-                    0f,
-                    0f
-                );
-
-            VerticalLayoutGroup layout =
-                content.GetComponent<VerticalLayoutGroup>();
-
-            layout.spacing =
-                5f;
-
-            layout.padding =
-                new RectOffset(
-                    5,
-                    5,
-                    5,
-                    5
-                );
-
-            layout.childForceExpandWidth =
-                true;
-
-            layout.childForceExpandHeight =
-                false;
-
-            ContentSizeFitter fitter =
-                content.GetComponent<ContentSizeFitter>();
-
-            fitter.verticalFit =
-                ContentSizeFitter.FitMode.PreferredSize;
-
-            // =====================================================
-            // SCROLL
-            // =====================================================
-
-            recipeScroll =
-                recipePanel.gameObject.AddComponent<ScrollRect>();
-
-            recipeScroll.viewport =
-                viewport;
-
-            recipeScroll.content =
-                recipeContent;
-
-            recipeScroll.horizontal =
-                false;
-
-            recipeScroll.vertical =
-                true;
-
-            recipeScroll.movementType =
-                ScrollRect.MovementType.Clamped;
-
-            // Ocultar por defecto.
-            recipePanelObject.SetActive(false);
-
-            // =====================================================
-            // PANEL DETALLES
-            // =====================================================
-
-            Image info =
-                CreateImage(
-                    casePanel.transform,
-                    "Recipe Details",
-                    new Color(
-                        0.11f,
-                        0.14f,
-                        0.13f,
-                        1f
-                    )
-                );
-
-            detailsPanelRect =
-                info.rectTransform;
-
-            // Posición inicial para inventario normal.
-            SetRect(
-                detailsPanelRect,
-                new Vector2(
-                    -145f,
-                    -125f
-                ),
-                new Vector2(
-                    350f,
-                    450f
-                ),
-                new Vector2(
-                    1f,
-                    1f
-                )
-            );
-
-            infoTitle =
-                CreateText(
-                    info.transform,
-                    "OBJETO SELECCIONADO",
-                    15,
-                    TextAnchor.UpperLeft,
-                    new Color(
-                        0.4f,
-                        0.78f,
-                        0.45f
-                    )
-                );
-
-            SetRect(
-                infoTitle.rectTransform,
-                new Vector2(
-                    20f,
-                    -22f
-                ),
-                new Vector2(
-                    310f,
-                    30f
-                ),
-                new Vector2(
-                    0f,
-                    1f
-                )
-            );
-
-            detailsText =
-                CreateText(
-                    info.transform,
-                    "Selecciona un objeto.",
-                    15,
-                    TextAnchor.UpperLeft,
-                    Color.white
-                );
-
-            detailsText.verticalOverflow =
-                VerticalWrapMode.Overflow;
-
-            detailsText.horizontalOverflow =
-                HorizontalWrapMode.Wrap;
-
-            SetRect(
-                detailsText.rectTransform,
-                new Vector2(
-                    20f,
-                    -60f
-                ),
-                new Vector2(
-                    310f,
-                    280f
-                ),
-                new Vector2(
-                    0f,
-                    1f
-                )
-            );
-
-            // =====================================================
-            // CANTIDAD -
-            // =====================================================
-
-            minusButton =
-                CreateButton(
-                    info.transform,
-                    "-",
-                    DecreaseCraftAmount
-                );
-
-            SetRect(
-                minusButton.GetComponent<RectTransform>(),
-                new Vector2(
-                    20f,
-                    83f
-                ),
-                new Vector2(
-                    45f,
-                    40f
-                ),
-                new Vector2(
-                    0f,
-                    0f
-                )
-            );
-
-            // =====================================================
-            // CANTIDAD
-            // =====================================================
-
-            Text quantityText =
-                CreateText(
-                    info.transform,
-                    "1",
-                    18,
-                    TextAnchor.MiddleCenter,
-                    Color.white
-                );
-
-            quantityText.name =
-                "Craft Quantity";
-
-            SetRect(
-                quantityText.rectTransform,
-                new Vector2(
-                    72f,
-                    83f
-                ),
-                new Vector2(
-                    75f,
-                    40f
-                ),
-                new Vector2(
-                    0f,
-                    0f
-                )
-            );
-
-            // =====================================================
-            // CANTIDAD +
-            // =====================================================
-
-            plusButton =
-                CreateButton(
-                    info.transform,
-                    "+",
-                    IncreaseCraftAmount
-                );
-
-            SetRect(
-                plusButton.GetComponent<RectTransform>(),
-                new Vector2(
-                    155f,
-                    83f
-                ),
-                new Vector2(
-                    45f,
-                    40f
-                ),
-                new Vector2(
-                    0f,
-                    0f
-                )
-            );
-
-            // =====================================================
-            // BOTÓN ACCIÓN
-            // =====================================================
-
-            actionButton =
-                CreateButton(
-                    info.transform,
-                    "ACCIÓN",
-                    ActionSelected
-                );
-
-            SetRect(
-                actionButton.GetComponent<RectTransform>(),
-                new Vector2(
-                    20f,
-                    28f
-                ),
-                new Vector2(
-                    310f,
-                    42f
-                ),
-                new Vector2(
-                    0f,
-                    0f
-                )
-            );
-
-            // =====================================================
-            // TEXTO INTERACCIÓN
-            // =====================================================
-
-            interactionText =
-                CreateText(
-                    runtimeCanvas.transform,
-                    string.Empty,
-                    19,
-                    TextAnchor.MiddleCenter,
-                    new Color(
-                        0.88f,
-                        1f,
-                        0.89f
-                    )
-                );
-
-            interactionText.fontStyle =
-                FontStyle.Bold;
-
-            interactionText.rectTransform.anchorMin =
-                interactionText.rectTransform.anchorMax =
-                new Vector2(
-                    0.5f,
-                    0f
-                );
-
-            interactionText.rectTransform.pivot =
-                new Vector2(
-                    0.5f,
-                    0f
-                );
-
-            interactionText.rectTransform.anchoredPosition =
-                new Vector2(
-                    0f,
-                    90f
-                );
-
-            interactionText.rectTransform.sizeDelta =
-                new Vector2(
-                    700f,
-                    34f
-                );
-        }
-
-        // =========================================================
-        // REFRESH INVENTARIO
-        // =========================================================
 
         private void RefreshInventory()
         {
-            if (
-                !IsOpen ||
-                inventory == null ||
-                grid == null
-            )
-            {
+            if (!IsOpen || inventory == null || grid == null)
                 return;
-            }
 
-            // Reaplicar la distribución por seguridad.
             UpdateLayoutForCurrentMode();
-
-            // =====================================================
-            // VALIDAR SELECCIÓN
-            // =====================================================
-
-            bool selectedExists =
-                false;
-
-            foreach (
-                ItemInstance item
-                in inventory.Items)
-            {
-                if (item == selectedItem)
-                {
-                    selectedExists = true;
-                    break;
-                }
-            }
-
-            if (!selectedExists)
+            if (!ContainsItem(selectedItem))
                 selectedItem = null;
 
-            // =====================================================
-            // LIMPIAR GRID
-            // =====================================================
+            RefreshCells();
+            RefreshItemVisuals();
 
-            ClearChildren(
-                grid
-            );
-
-            grid.sizeDelta =
-                new Vector2(
-                    inventory.Width *
-                        (CellSize + Gap) -
-                        Gap,
-
-                    inventory.Height *
-                        (CellSize + Gap) -
-                        Gap
-                );
-
-            // =====================================================
-            // CASILLAS
-            // =====================================================
-
-            for (
-                int y = 0;
-                y < inventory.Height;
-                y++)
+            if (titleText != null)
             {
-                for (
-                    int x = 0;
-                    x < inventory.Width;
-                    x++)
-                {
-                    Vector2Int cell =
-                        new Vector2Int(
-                            x,
-                            y
-                        );
-
-                    Button slot =
-                        CreateButton(
-                            grid,
-                            string.Empty,
-                            delegate
-                            {
-                                ClickCell(cell);
-                            }
-                        );
-
-                    slot.GetComponent<Image>().color =
-                        inventory.IsCellOccupied(cell)
-                            ? new Color(
-                                0.10f,
-                                0.13f,
-                                0.12f,
-                                1f
-                            )
-                            : new Color(
-                                0.16f,
-                                0.19f,
-                                0.18f,
-                                1f
-                            );
-
-                    SetRect(
-                        slot.GetComponent<RectTransform>(),
-                        new Vector2(
-                            x *
-                            (CellSize + Gap),
-
-                            -y *
-                            (CellSize + Gap)
-                        ),
-                        new Vector2(
-                            CellSize,
-                            CellSize
-                        ),
-                        new Vector2(
-                            0f,
-                            1f
-                        )
-                    );
-                }
+                int balance = wallet == null ? 0 : wallet.Balance;
+                titleText.text = "INVENTARIO  <color=#69c475>" + inventory.UsedCells + "/" +
+                    inventory.Capacity + "</color>    <color=#f2d66a>¢ " + balance + "</color>";
             }
 
-            // =====================================================
-            // ITEMS
-            // =====================================================
-
-            foreach (
-                ItemInstance item
-                in inventory.Items)
+            if (activeRecyclingMachine != null)
             {
-                CreateItemVisual(item);
-            }
-
-            // =====================================================
-            // CABECERA
-            // =====================================================
-
-            int balance =
-                wallet == null
-                    ? 0
-                    : wallet.Balance;
-
-            titleText.text =
-                "INVENTARIO  " +
-                "<color=#69c475>" +
-                inventory.UsedCells +
-                "/" +
-                (
-                    inventory.Width *
-                    inventory.Height
-                ) +
-                "</color>" +
-                "    " +
-                "<color=#f2d66a>" +
-                "¢ " +
-                balance +
-                "</color>";
-
-            // =====================================================
-            // MODO
-            // =====================================================
-
-            if (
-                activeRecyclingMachine != null
-            )
-            {
-                modeText.text =
-                    activeRecyclingMachine
-                        .StationName
-                        .ToUpperInvariant() +
-                    "  //  SELECCIONA UNA RECETA";
-
-                if (recipePanelObject != null)
-                    recipePanelObject.SetActive(true);
-
+                if (modeText != null)
+                    modeText.text = activeRecyclingMachine.StationName.ToUpperInvariant() + "  //  SELECCIONA UNA RECETA";
                 RefreshRecipeList();
                 RefreshRecipeDetails();
-
                 return;
             }
 
-            if (
-                activeSellTable != null
-            )
+            if (activeSellTable != null)
             {
-                modeText.text =
-                    activeSellTable
-                        .StationName
-                        .ToUpperInvariant() +
-                    "  //  SELECCIONA Y VENDE UN LOTE";
-
-                if (recipePanelObject != null)
-                    recipePanelObject.SetActive(false);
-
+                if (modeText != null)
+                    modeText.text = activeSellTable.StationName.ToUpperInvariant() + "  //  SELECCIONA Y VENDE UN LOTE";
                 RefreshSellUI();
-
                 return;
             }
 
-            // =====================================================
-            // INVENTARIO NORMAL
-            // =====================================================
-
-            modeText.text =
-                "MALETÍN DE RECUPERACIÓN  // TAB PARA CERRAR";
-
+            if (modeText != null)
+                modeText.text = "MALETÍN DE RECUPERACIÓN  // TAB PARA CERRAR";
             if (recipePanelObject != null)
                 recipePanelObject.SetActive(false);
-
             if (actionButton != null)
                 actionButton.gameObject.SetActive(false);
-
             RefreshDetails();
         }
 
-        // =========================================================
-        // LISTA DE RECETAS
-        // =========================================================
+        private void RefreshCells()
+        {
+            if (inventoryCells == null)
+                return;
+
+            for (int i = 0; i < inventoryCells.Length; i++)
+            {
+                if (inventoryCells[i] == null)
+                    continue;
+
+                int x = i % inventory.Width;
+                int y = i / inventory.Width;
+                bool occupied = inventory.IsCellOccupied(new Vector2Int(x, y));
+                if (inventoryCellImages != null && i < inventoryCellImages.Length && inventoryCellImages[i] != null)
+                {
+                    inventoryCellImages[i].color = occupied
+                        ? new Color(0.10f, 0.13f, 0.12f, 1f)
+                        : new Color(0.16f, 0.19f, 0.18f, 1f);
+                }
+            }
+        }
+
+        private void RefreshItemVisuals()
+        {
+            if (itemVisuals == null)
+                return;
+
+            for (int i = 0; i < itemVisuals.Length; i++)
+            {
+                if (itemVisuals[i] != null)
+                    itemVisuals[i].gameObject.SetActive(false);
+            }
+
+            int visualIndex = 0;
+            foreach (ItemInstance item in inventory.Items)
+            {
+                if (visualIndex >= itemVisuals.Length)
+                    break;
+                if (item == null || item.Definition == null || itemVisuals[visualIndex] == null)
+                    continue;
+
+                RectTransform visual = itemVisuals[visualIndex];
+                visual.gameObject.SetActive(true);
+                visual.anchoredPosition = new Vector2(
+                    item.Position.x * (cellSize + cellGap),
+                    -item.Position.y * (cellSize + cellGap));
+                visual.sizeDelta = new Vector2(
+                    item.Size.x * cellSize + (item.Size.x - 1) * cellGap,
+                    item.Size.y * cellSize + (item.Size.y - 1) * cellGap);
+
+                if (itemImages != null && visualIndex < itemImages.Length && itemImages[visualIndex] != null)
+                    itemImages[visualIndex].color = ItemColor(item.Definition);
+
+                if (itemIcons != null && visualIndex < itemIcons.Length && itemIcons[visualIndex] != null)
+                {
+                    itemIcons[visualIndex].sprite = item.Definition.Icon;
+                    itemIcons[visualIndex].enabled = item.Definition.Icon != null;
+                    itemIcons[visualIndex].color = Color.white;
+                }
+
+                if (itemOutlines != null && visualIndex < itemOutlines.Length && itemOutlines[visualIndex] != null)
+                {
+                    itemOutlines[visualIndex].effectColor = item == selectedItem
+                        ? new Color(0.8f, 1f, 0.56f, 1f)
+                        : new Color(0.02f, 0.04f, 0.03f, 1f);
+                    itemOutlines[visualIndex].effectDistance = item == selectedItem
+                        ? new Vector2(3f, -3f)
+                        : new Vector2(1f, -1f);
+                }
+
+                if (itemLabels != null && visualIndex < itemLabels.Length && itemLabels[visualIndex] != null)
+                    itemLabels[visualIndex].text = item.Definition.ItemName.ToUpperInvariant();
+
+                if (itemCounts != null && visualIndex < itemCounts.Length && itemCounts[visualIndex] != null)
+                {
+                    itemCounts[visualIndex].text = item.Amount > 1 ? "x" + item.Amount : string.Empty;
+                    itemCounts[visualIndex].gameObject.SetActive(item.Amount > 1);
+                }
+
+                visualIndex++;
+            }
+        }
 
         private void RefreshRecipeList()
         {
-            if (
-                recipeContent == null ||
-                activeRecyclingMachine == null
-            )
-            {
+            if (recipeButtons == null || activeRecyclingMachine == null)
                 return;
-            }
 
-            ClearChildren(
-                recipeContent
-            );
-
-            int count =
-                activeRecyclingMachine.RecipeCount;
-
-            if (count <= 0)
+            int count = activeRecyclingMachine.RecipeCount;
+            for (int i = 0; i < recipeButtons.Length; i++)
             {
-                Text empty =
-                    CreateText(
-                        recipeContent,
-                        "No hay recetas.",
-                        14,
-                        TextAnchor.MiddleCenter,
-                        Color.white
-                    );
+                bool visible = i < count && activeRecyclingMachine.GetRecipe(i) != null;
+                if (recipeButtons[i] != null)
+                {
+                    recipeButtons[i].gameObject.SetActive(visible);
+                    if (visible)
+                    {
+                        Image image = recipeButtons[i].GetComponent<Image>();
+                        if (image != null)
+                            image.color = i == selectedRecipeIndex
+                                ? new Color(0.25f, 0.45f, 0.28f, 1f)
+                                : new Color(0.16f, 0.19f, 0.18f, 1f);
+                    }
+                }
 
-                LayoutElement element =
-                    empty.gameObject
-                        .AddComponent<LayoutElement>();
-
-                element.preferredHeight =
-                    40f;
-
-                return;
-            }
-
-            if (
-                selectedRecipeIndex < 0 ||
-                selectedRecipeIndex >= count
-            )
-            {
-                selectedRecipeIndex =
-                    0;
-            }
-
-            for (
-                int i = 0;
-                i < count;
-                i++)
-            {
-                RecyclingMachine.CraftingRecipe recipe =
-                    activeRecyclingMachine.GetRecipe(i);
-
-                if (recipe == null)
-                    continue;
-
-                int recipeIndex =
-                    i;
-
-                Button button =
-                    CreateButton(
-                        recipeContent,
-                        recipe.recipeName,
-                        delegate
-                        {
-                            SelectRecipe(
-                                recipeIndex
-                            );
-                        }
-                    );
-
-                LayoutElement element =
-                    button.gameObject
-                        .AddComponent<LayoutElement>();
-
-                element.preferredHeight =
-                    48f;
-
-                Image image =
-                    button.GetComponent<Image>();
-
-                image.color =
-                    recipeIndex ==
-                    selectedRecipeIndex
-                        ? new Color(
-                            0.25f,
-                            0.45f,
-                            0.28f,
-                            1f
-                        )
-                        : new Color(
-                            0.16f,
-                            0.19f,
-                            0.18f,
-                            1f
-                        );
+                if (recipeButtonLabels != null && i < recipeButtonLabels.Length && recipeButtonLabels[i] != null)
+                    recipeButtonLabels[i].text = visible
+                        ? activeRecyclingMachine.GetRecipe(i).recipeName
+                        : string.Empty;
             }
         }
 
-        private void SelectRecipe(
-            int index)
+        private void SelectRecipe(int index)
         {
-            if (
-                activeRecyclingMachine == null
-            )
-            {
+            if (activeRecyclingMachine == null || index < 0 || index >= activeRecyclingMachine.RecipeCount)
                 return;
-            }
 
-            if (
-                index < 0 ||
-                index >=
-                activeRecyclingMachine.RecipeCount
-            )
-            {
-                return;
-            }
-
-            selectedRecipeIndex =
-                index;
-
-            craftAmount =
-                1;
-
+            selectedRecipeIndex = index;
+            craftAmount = 1;
             RefreshInventory();
         }
 
-        // =========================================================
-        // DETALLES RECETA
-        // =========================================================
-
         private void RefreshRecipeDetails()
         {
-            if (
-                activeRecyclingMachine == null ||
-                detailsText == null
-            )
-            {
+            if (activeRecyclingMachine == null || detailsText == null)
                 return;
-            }
 
-            RecyclingMachine.CraftingRecipe recipe =
-                activeRecyclingMachine.GetRecipe(
-                    selectedRecipeIndex
-                );
-
+            RecyclingMachine.CraftingRecipe recipe = activeRecyclingMachine.GetRecipe(selectedRecipeIndex);
             if (recipe == null)
             {
-                infoTitle.text =
-                    "RECETA";
-
-                detailsText.text =
-                    "Selecciona una receta.";
-
+                if (infoTitle != null)
+                    infoTitle.text = "RECETA";
+                detailsText.text = "Selecciona una receta.";
                 if (actionButton != null)
-                    actionButton.gameObject
-                        .SetActive(false);
-
+                    actionButton.gameObject.SetActive(false);
                 UpdateQuantityText();
-
                 return;
             }
 
-            infoTitle.text =
-                recipe.recipeName
-                    .ToUpperInvariant();
+            if (infoTitle != null)
+                infoTitle.text = recipe.recipeName.ToUpperInvariant();
 
-            string text =
-                string.Empty;
-
-            // =====================================================
-            // DESCRIPCIÓN
-            // =====================================================
-
-            if (
-                !string.IsNullOrWhiteSpace(
-                    recipe.description
-                )
-            )
+            string text = string.IsNullOrWhiteSpace(recipe.description) ? string.Empty : recipe.description + "\n\n";
+            text += "<b>INGREDIENTES</b>\n";
+            if (recipe.ingredients != null)
             {
-                text +=
-                    recipe.description +
-                    "\n\n";
-            }
-
-            // =====================================================
-            // INGREDIENTES
-            // =====================================================
-
-            text +=
-                "<b>INGREDIENTES</b>\n";
-
-            for (
-                int i = 0;
-                i < recipe.ingredients.Count;
-                i++)
-            {
-                RecyclingMachine.RecipePart part =
-                    recipe.ingredients[i];
-
-                if (
-                    part == null ||
-                    part.item == null
-                )
+                foreach (RecyclingMachine.RecipePart part in recipe.ingredients)
                 {
-                    continue;
+                    if (part == null || part.item == null)
+                        continue;
+                    int required = part.amount * craftAmount;
+                    int available = activeRecyclingMachine.GetTotalAmountById(inventory, part.item.ItemID);
+                    text += "• " + required + " × " + part.item.ItemName + "  (" + available + ")";
+                    text += available >= required ? " <color=#69c475>✓</color>\n" : " <color=#cc5555>✕</color>\n";
                 }
-
-                int required =
-                    part.amount *
-                    craftAmount;
-
-                int available =
-                    activeRecyclingMachine
-                        .GetTotalAmountById(
-                            inventory,
-                            part.item.ItemID
-                        );
-
-                bool enough =
-                    available >= required;
-
-                text +=
-                    "• " +
-                    required +
-                    " × " +
-                    part.item.ItemName +
-                    "  (" +
-                    available +
-                    ")";
-
-                text +=
-                    enough
-                        ? " <color=#69c475>✓</color>"
-                        : " <color=#cc5555>✕</color>";
-
-                text +=
-                    "\n";
             }
 
-            // =====================================================
-            // RESULTADOS
-            // =====================================================
-
-            text +=
-                "\n<b>RESULTADOS</b>\n";
-
-            for (
-                int i = 0;
-                i < recipe.outputs.Count;
-                i++)
+            text += "\n<b>RESULTADOS</b>\n";
+            if (recipe.outputs != null)
             {
-                RecyclingMachine.RecipePart part =
-                    recipe.outputs[i];
-
-                if (
-                    part == null ||
-                    part.item == null
-                )
+                foreach (RecyclingMachine.RecipePart part in recipe.outputs)
                 {
-                    continue;
+                    if (part != null && part.item != null)
+                        text += "• " + part.amount * craftAmount + " × " + part.item.ItemName + "\n";
                 }
-
-                int outputAmount =
-                    part.amount *
-                    craftAmount;
-
-                text +=
-                    "• " +
-                    outputAmount +
-                    " × " +
-                    part.item.ItemName +
-                    "\n";
             }
 
-            // =====================================================
-            // PROGRESO
-            // =====================================================
+            if (activeRecyclingMachine.IsProcessing)
+                text += "\n" + activeRecyclingMachine.StatusMessage;
 
-            if (
-                activeRecyclingMachine.IsProcessing
-            )
-            {
-                text +=
-                    "\n" +
-                    activeRecyclingMachine
-                        .StatusMessage;
-            }
-
-            detailsText.text =
-                text;
-
+            detailsText.text = text;
             UpdateQuantityText();
-
-            RefreshCraftButton(
-                recipe
-            );
+            RefreshCraftButton(recipe);
         }
 
-        // =========================================================
-        // BOTÓN FABRICAR
-        // =========================================================
-
-        private void RefreshCraftButton(
-            RecyclingMachine.CraftingRecipe recipe)
+        private void RefreshCraftButton(RecyclingMachine.CraftingRecipe recipe)
         {
             if (actionButton == null)
                 return;
 
-            actionButton.gameObject.SetActive(
-                true
-            );
-
-            Text buttonText =
-                actionButton
-                    .GetComponentInChildren<Text>();
-
-            // -----------------------------------------------------
-            // PROCESANDO
-            // -----------------------------------------------------
-
-            if (
-                activeRecyclingMachine.IsProcessing
-            )
-            {
-                actionButton.interactable =
-                    false;
-
-                if (buttonText != null)
-                {
-                    int percent =
-                        Mathf.RoundToInt(
-                            activeRecyclingMachine
-                                .Progress *
-                            100f
-                        );
-
-                    buttonText.text =
-                        percent +
-                        "%";
-                }
-
-                return;
-            }
-
-            // -----------------------------------------------------
-            // DISPONIBILIDAD
-            // -----------------------------------------------------
-
-            bool canCraft =
-                activeRecyclingMachine.CanCraft(
-                    inventory,
-                    recipe,
-                    craftAmount
-                );
-
-            actionButton.interactable =
-                canCraft;
-
+            actionButton.gameObject.SetActive(true);
+            actionButton.interactable = !activeRecyclingMachine.IsProcessing &&
+                activeRecyclingMachine.CanCraft(inventory, recipe, craftAmount);
+            Text buttonText = actionButton.GetComponentInChildren<Text>();
             if (buttonText != null)
-                buttonText.text =
-                    "FABRICAR";
+                buttonText.text = activeRecyclingMachine.IsProcessing
+                    ? Mathf.RoundToInt(activeRecyclingMachine.Progress * 100f) + "%"
+                    : "FABRICAR";
         }
-
-        // =========================================================
-        // CANTIDAD
-        // =========================================================
 
         private void IncreaseCraftAmount()
         {
-            if (
-                activeRecyclingMachine == null ||
-                activeRecyclingMachine.IsProcessing
-            )
+            if (activeRecyclingMachine != null)
             {
+                if (activeRecyclingMachine.IsProcessing)
+                    return;
+
+                craftAmount = Mathf.Clamp(craftAmount + 1, 1, 99);
+                RefreshRecipeDetails();
                 return;
             }
 
-            craftAmount =
-                Mathf.Clamp(
-                    craftAmount + 1,
-                    1,
-                    99
-                );
-
-            RefreshRecipeDetails();
+            if (activeSellTable != null && selectedItem != null)
+            {
+                craftAmount = Mathf.Clamp(craftAmount + 1, 1, selectedItem.Amount);
+                RefreshSellUI();
+            }
         }
 
         private void DecreaseCraftAmount()
         {
-            if (
-                activeRecyclingMachine == null ||
-                activeRecyclingMachine.IsProcessing
-            )
+            if (activeRecyclingMachine != null)
             {
+                if (activeRecyclingMachine.IsProcessing)
+                    return;
+
+                craftAmount = Mathf.Clamp(craftAmount - 1, 1, 99);
+                RefreshRecipeDetails();
                 return;
             }
 
-            craftAmount =
-                Mathf.Clamp(
-                    craftAmount - 1,
-                    1,
-                    99
-                );
-
-            RefreshRecipeDetails();
+            if (activeSellTable != null && selectedItem != null)
+            {
+                craftAmount = Mathf.Clamp(craftAmount - 1, 1, selectedItem.Amount);
+                RefreshSellUI();
+            }
         }
 
         private void UpdateQuantityText()
         {
-            if (minusButton == null)
-                return;
-
-            Transform parent =
-                minusButton.transform.parent;
-
-            Transform textTransform =
-                parent.Find(
-                    "Craft Quantity"
-                );
-
-            if (textTransform == null)
-                return;
-
-            Text quantityText =
-                textTransform.GetComponent<Text>();
-
             if (quantityText != null)
-                quantityText.text =
-                    craftAmount.ToString();
+                quantityText.text = craftAmount.ToString();
         }
-
-        // =========================================================
-        // ACCIÓN
-        // =========================================================
 
         private void ActionSelected()
         {
             if (activeSellTable != null)
-            {
                 SellSelected();
-                return;
-            }
-
-            if (
-                activeRecyclingMachine != null
-            )
-            {
+            else if (activeRecyclingMachine != null)
                 CraftSelected();
-            }
         }
-
-        // =========================================================
-        // FABRICAR
-        // =========================================================
 
         private void CraftSelected()
         {
-            if (
-                activeRecyclingMachine == null
-            )
-            {
+            if (activeRecyclingMachine == null || selectedRecipeIndex < 0)
                 return;
-            }
-
-            if (selectedRecipeIndex < 0)
-                return;
-
-            activeRecyclingMachine.TryStartCraft(
-                inventory,
-                selectedRecipeIndex,
-                craftAmount
-            );
-
+            activeRecyclingMachine.TryStartCraft(inventory, selectedRecipeIndex, craftAmount);
             RefreshRecipeDetails();
         }
 
-        // =========================================================
-        // VENTA
-        // =========================================================
-
         private void RefreshSellUI()
         {
-            if (actionButton == null)
-                return;
+            if (selectedItem == null)
+                craftAmount = 1;
+            else
+                craftAmount = Mathf.Clamp(craftAmount, 1, selectedItem.Amount);
 
-            actionButton.gameObject.SetActive(
-                selectedItem != null
-            );
+            if (minusButton != null)
+                minusButton.interactable = selectedItem != null && craftAmount > 1;
+            if (plusButton != null)
+                plusButton.interactable = selectedItem != null && craftAmount < (selectedItem == null ? 1 : selectedItem.Amount);
 
-            actionButton.interactable =
-                selectedItem != null;
+            UpdateQuantityText();
 
-            Text buttonText =
-                actionButton
-                    .GetComponentInChildren<Text>();
-
-            if (buttonText != null)
-                buttonText.text =
-                    "VENDER LOTE";
-
+            if (actionButton != null)
+            {
+                actionButton.gameObject.SetActive(selectedItem != null);
+                actionButton.interactable = selectedItem != null;
+                Text buttonText = actionButton.GetComponentInChildren<Text>();
+                if (buttonText != null)
+                    buttonText.text = selectedItem == null
+                        ? "VENDER LOTE"
+                        : "VENDER " + craftAmount;
+            }
             RefreshDetails();
         }
 
         private void SellSelected()
         {
-            if (
-                activeSellTable == null ||
-                selectedItem == null ||
-                wallet == null
-            )
-            {
+            if (activeSellTable == null || selectedItem == null || wallet == null)
                 return;
-            }
 
-            int earned;
-
-            bool sold =
-                activeSellTable.TrySell(
-                    inventory,
-                    wallet,
-                    selectedItem,
-                    out earned
-                );
-
-            if (sold)
+            int amountToSell = Mathf.Clamp(craftAmount, 1, selectedItem.Amount);
+            int remainingAfterSale = selectedItem.Amount - amountToSell;
+            if (activeSellTable.TrySellAmount(inventory, wallet, selectedItem, amountToSell, out _))
             {
-                selectedItem =
-                    null;
-
+                if (remainingAfterSale <= 0)
+                    selectedItem = null;
+                else
+                    craftAmount = Mathf.Clamp(craftAmount, 1, remainingAfterSale);
                 RefreshInventory();
             }
         }
 
-        // =========================================================
-        // CELDA INVENTARIO
-        // =========================================================
-
-        private void ClickCell(
-            Vector2Int cell)
+        private void ClickCell(int cellIndex)
         {
-            if (inventory == null)
+            if (inventory == null || cellIndex < 0 || cellIndex >= inventory.Capacity)
                 return;
 
-            ItemInstance clicked =
-                inventory.GetItemAtCell(cell);
-
+            Vector2Int cell = new Vector2Int(cellIndex % inventory.Width, cellIndex / inventory.Width);
+            ItemInstance clicked = inventory.GetItemAtCell(cell);
             if (selectedItem == null)
             {
-                selectedItem =
-                    clicked;
+                selectedItem = clicked;
+                craftAmount = 1;
             }
-            else if (
-                clicked == selectedItem
-            )
+            else if (clicked == selectedItem)
             {
-                selectedItem =
-                    null;
+                selectedItem = null;
+                craftAmount = 1;
             }
-            else if (
-                clicked != null
-            )
+            else if (clicked != null)
             {
-                selectedItem =
-                    clicked;
+                selectedItem = clicked;
+                craftAmount = 1;
             }
             else
-            {
-                inventory.TryMoveItem(
-                    selectedItem,
-                    cell,
-                    selectedItem.Rotated
-                );
-            }
-
+                inventory.TryMoveItem(selectedItem, cell, selectedItem.Rotated);
             RefreshInventory();
         }
-
-        // =========================================================
-        // ROTAR
-        // =========================================================
 
         private void RotateSelected()
         {
-            if (
-                selectedItem == null ||
-                inventory == null
-            )
+            if (selectedItem != null && inventory != null)
             {
-                return;
+                inventory.TryRotateItem(selectedItem);
+                RefreshInventory();
             }
-
-            inventory.TryRotateItem(
-                selectedItem
-            );
-
-            RefreshInventory();
         }
-
-        // =========================================================
-        // DETALLES OBJETO
-        // =========================================================
 
         private void RefreshDetails()
         {
             if (detailsText == null)
                 return;
-
-            if (
-                selectedItem == null ||
-                selectedItem.Definition == null
-            )
+            if (selectedItem == null || selectedItem.Definition == null)
             {
-                detailsText.text =
-                    "Selecciona un objeto.";
-
+                detailsText.text = "Selecciona un objeto.";
                 return;
             }
 
-            ItemDefinition item =
-                selectedItem.Definition;
-
-            string description =
-                string.IsNullOrWhiteSpace(
-                    item.Description
-                )
-                    ? "Sin descripción."
-                    : item.Description;
-
-            detailsText.text =
-                "<b>" +
-                item.ItemName +
-                "</b>\n\n" +
-                item.Category
-                    .ToString()
-                    .ToUpperInvariant() +
-                "\nID  " +
-                item.ItemID +
-                "\n\n" +
-                description +
-                "\n\nTAMAÑO  " +
-                selectedItem.Size.x +
-                " × " +
-                selectedItem.Size.y +
-                (
-                    item.Stackable
-                        ? "\nCANTIDAD  " +
-                          selectedItem.Amount +
-                          "/" +
-                          item.MaxStack
-                        : string.Empty
-                );
+            ItemDefinition item = selectedItem.Definition;
+            string description = string.IsNullOrWhiteSpace(item.Description) ? "Sin descripción." : item.Description;
+            detailsText.text = "<b>" + item.ItemName + "</b>\n\n" +
+                item.Category.ToString().ToUpperInvariant() + "\nID  " + item.ItemID + "\n\n" +
+                description + "\n\nTAMAÑO  " + selectedItem.Size.x + " × " + selectedItem.Size.y +
+                (item.Stackable ? "\nCANTIDAD  " + selectedItem.Amount + "/" + item.MaxStack : string.Empty);
         }
 
-        // =========================================================
-        // VISUAL ITEM
-        // =========================================================
-
-        private void CreateItemVisual(
-            ItemInstance item)
+        private bool ContainsItem(ItemInstance item)
         {
-            if (
-                item == null ||
-                item.Definition == null
-            )
+            if (item == null || inventory == null)
+                return false;
+            foreach (ItemInstance candidate in inventory.Items)
             {
-                return;
+                if (candidate == item)
+                    return true;
             }
-
-            Image visual =
-                CreateImage(
-                    grid,
-                    item.Definition.ItemName,
-                    ItemColor(
-                        item.Definition
-                    )
-                );
-
-            visual.raycastTarget =
-                false;
-
-            RectTransform rect =
-                visual.rectTransform;
-
-            rect.SetAsLastSibling();
-
-            SetRect(
-                rect,
-                new Vector2(
-                    item.Position.x *
-                    (CellSize + Gap),
-
-                    -item.Position.y *
-                    (CellSize + Gap)
-                ),
-                new Vector2(
-                    item.Size.x *
-                    CellSize +
-                    (item.Size.x - 1) *
-                    Gap,
-
-                    item.Size.y *
-                    CellSize +
-                    (item.Size.y - 1) *
-                    Gap
-                ),
-                new Vector2(
-                    0f,
-                    1f
-                )
-            );
-
-            // =====================================================
-            // ICONO
-            // =====================================================
-
-            if (item.Definition.Icon != null)
-            {
-                Image icon =
-                    CreateImage(
-                        visual.transform,
-                        "Icon",
-                        Color.white
-                    );
-
-                icon.sprite =
-                    item.Definition.Icon;
-
-                icon.preserveAspect =
-                    true;
-
-                icon.raycastTarget =
-                    false;
-
-                Stretch(
-                    icon.rectTransform,
-                    10f
-                );
-            }
-
-            // =====================================================
-            // OUTLINE
-            // =====================================================
-
-            Outline outline =
-                visual.gameObject
-                    .AddComponent<Outline>();
-
-            outline.effectColor =
-                item == selectedItem
-                    ? new Color(
-                        0.8f,
-                        1f,
-                        0.56f,
-                        1f
-                    )
-                    : new Color(
-                        0.02f,
-                        0.04f,
-                        0.03f,
-                        1f
-                    );
-
-            outline.effectDistance =
-                item == selectedItem
-                    ? new Vector2(
-                        3f,
-                        -3f
-                    )
-                    : new Vector2(
-                        1f,
-                        -1f
-                    );
-
-            // =====================================================
-            // NOMBRE
-            // =====================================================
-
-            Text label =
-                CreateText(
-                    visual.transform,
-                    item.Definition
-                        .ItemName
-                        .ToUpperInvariant(),
-                    item.Size.x >= 2
-                        ? 12
-                        : 10,
-                    TextAnchor.LowerCenter,
-                    Color.white
-                );
-
-            label.raycastTarget =
-                false;
-
-            SetRect(
-                label.rectTransform,
-                new Vector2(
-                    4f,
-                    4f
-                ),
-                new Vector2(
-                    Mathf.Max(
-                        30f,
-                        rect.rect.width - 8f
-                    ),
-                    26f
-                ),
-                new Vector2(
-                    0.5f,
-                    0f
-                )
-            );
-
-            // =====================================================
-            // CANTIDAD
-            // =====================================================
-
-            if (item.Amount > 1)
-            {
-                Text count =
-                    CreateText(
-                        visual.transform,
-                        "x" +
-                        item.Amount,
-                        14,
-                        TextAnchor.LowerRight,
-                        Color.white
-                    );
-
-                count.raycastTarget =
-                    false;
-
-                SetRect(
-                    count.rectTransform,
-                    new Vector2(
-                        -5f,
-                        5f
-                    ),
-                    new Vector2(
-                        60f,
-                        22f
-                    ),
-                    new Vector2(
-                        1f,
-                        0f
-                    )
-                );
-            }
+            return false;
         }
-
-        // =========================================================
-        // UI HELPERS
-        // =========================================================
-
-        private static Image CreateImage(
-            Transform parent,
-            string objectName,
-            Color color)
-        {
-            GameObject go =
-                new GameObject(
-                    objectName,
-                    typeof(RectTransform),
-                    typeof(CanvasRenderer),
-                    typeof(Image)
-                );
-
-            go.transform.SetParent(
-                parent,
-                false
-            );
-
-            Image image =
-                go.GetComponent<Image>();
-
-            image.color =
-                color;
-
-            return image;
-        }
-
-        private static Text CreateText(
-            Transform parent,
-            string content,
-            int size,
-            TextAnchor alignment,
-            Color color)
-        {
-            GameObject go =
-                new GameObject(
-                    "Text",
-                    typeof(RectTransform),
-                    typeof(CanvasRenderer),
-                    typeof(Text)
-                );
-
-            go.transform.SetParent(
-                parent,
-                false
-            );
-
-            Text text =
-                go.GetComponent<Text>();
-
-            text.font =
-                Resources.GetBuiltinResource<Font>(
-                    "LegacyRuntime.ttf"
-                );
-
-            text.text =
-                content;
-
-            text.fontSize =
-                size;
-
-            text.alignment =
-                alignment;
-
-            text.color =
-                color;
-
-            text.supportRichText =
-                true;
-
-            return text;
-        }
-
-        private static Button CreateButton(
-            Transform parent,
-            string label,
-            UnityEngine.Events.UnityAction action)
-        {
-            Image image =
-                CreateImage(
-                    parent,
-                    "Button",
-                    new Color(
-                        0.16f,
-                        0.19f,
-                        0.18f,
-                        1f
-                    )
-                );
-
-            Button button =
-                image.gameObject
-                    .AddComponent<Button>();
-
-            ColorBlock colors =
-                button.colors;
-
-            colors.normalColor =
-                Color.white;
-
-            colors.highlightedColor =
-                new Color(
-                    0.72f,
-                    0.9f,
-                    0.7f,
-                    1f
-                );
-
-            colors.pressedColor =
-                new Color(
-                    0.43f,
-                    0.66f,
-                    0.42f,
-                    1f
-                );
-
-            button.colors =
-                colors;
-
-            button.onClick.AddListener(
-                action
-            );
-
-            if (!string.IsNullOrEmpty(label))
-            {
-                Text text =
-                    CreateText(
-                        button.transform,
-                        label,
-                        15,
-                        TextAnchor.MiddleCenter,
-                        Color.white
-                    );
-
-                Stretch(
-                    text.rectTransform,
-                    4f
-                );
-
-                text.raycastTarget =
-                    false;
-            }
-
-            return button;
-        }
-
-        private static void SetRect(
-            RectTransform rect,
-            Vector2 position,
-            Vector2 size,
-            Vector2 anchor)
-        {
-            rect.anchorMin =
-                rect.anchorMax =
-                anchor;
-
-            rect.pivot =
-                anchor;
-
-            rect.anchoredPosition =
-                position;
-
-            rect.sizeDelta =
-                size;
-        }
-
-        private static void Stretch(
-            RectTransform rect,
-            float padding = 0f)
-        {
-            rect.anchorMin =
-                Vector2.zero;
-
-            rect.anchorMax =
-                Vector2.one;
-
-            rect.offsetMin =
-                new Vector2(
-                    padding,
-                    padding
-                );
-
-            rect.offsetMax =
-                new Vector2(
-                    -padding,
-                    -padding
-                );
-        }
-
-        private static void ClearChildren(
-            Transform parent)
-        {
-            for (
-                int i =
-                    parent.childCount - 1;
-                i >= 0;
-                i--
-            )
-            {
-                Destroy(
-                    parent.GetChild(i).gameObject
-                );
-            }
-        }
-
-        private static Color ItemColor(
-            ItemDefinition item)
-        {
-            switch (item.Category)
-            {
-                case ItemCategory.Wood:
-                    return new Color(
-                        0.44f,
-                        0.25f,
-                        0.12f,
-                        1f
-                    );
-
-                case ItemCategory.Metal:
-                    return new Color(
-                        0.28f,
-                        0.38f,
-                        0.43f,
-                        1f
-                    );
-
-                case ItemCategory.Paper:
-                    return new Color(
-                        0.55f,
-                        0.49f,
-                        0.31f,
-                        1f
-                    );
-
-                case ItemCategory.Plastic:
-                    return new Color(
-                        0.18f,
-                        0.43f,
-                        0.49f,
-                        1f
-                    );
-
-                case ItemCategory.Porcelain:
-                    return new Color(
-                        0.70f,
-                        0.70f,
-                        0.72f,
-                        1f
-                    );
-
-                case ItemCategory.Glass:
-                    return new Color(
-                        0.16f,
-                        0.53f,
-                        0.48f,
-                        1f
-                    );
-
-                case ItemCategory.Organic:
-                    return new Color(
-                        0.30f,
-                        0.48f,
-                        0.20f,
-                        1f
-                    );
-
-                case ItemCategory.Tool:
-                    return new Color(
-                        0.54f,
-                        0.26f,
-                        0.16f,
-                        1f
-                    );
-
-                case ItemCategory.KeyItem:
-                    return new Color(
-                        0.55f,
-                        0.47f,
-                        0.12f,
-                        1f
-                    );
-
-                case ItemCategory.Consumable:
-                    return new Color(
-                        0.42f,
-                        0.24f,
-                        0.48f,
-                        1f
-                    );
-
-                case ItemCategory.Equipment:
-                    return new Color(
-                        0.24f,
-                        0.32f,
-                        0.48f,
-                        1f
-                    );
-
-                case ItemCategory.Quest:
-                    return new Color(
-                        0.48f,
-                        0.43f,
-                        0.20f,
-                        1f
-                    );
-
-                default:
-                    return item.FallbackColor;
-            }
-        }
-
-        // =========================================================
-        // EVENT SYSTEM
-        // =========================================================
-
-        private static void EnsureEventSystem()
-        {
-            if (
-                Object.FindFirstObjectByType<EventSystem>() !=
-                null
-            )
-            {
-                return;
-            }
-
-            GameObject eventSystem =
-                new GameObject(
-                    "EventSystem",
-                    typeof(EventSystem),
-                    typeof(InputSystemUIInputModule)
-                );
-
-            eventSystem
-                .GetComponent<EventSystem>()
-                .sendNavigationEvents =
-                true;
-        }
-
-        // =========================================================
-        // REFRESH ESTACIÓN
-        // =========================================================
 
         public void RefreshStationUI()
         {
             if (!IsOpen)
                 return;
-
-            if (
-                activeRecyclingMachine != null
-            )
-            {
+            if (activeRecyclingMachine != null)
                 RefreshRecipeDetails();
-            }
-            else if (
-                activeSellTable != null
-            )
-            {
+            else if (activeSellTable != null)
                 RefreshSellUI();
+        }
+
+        private static Color ItemColor(ItemDefinition item)
+        {
+            switch (item.Category)
+            {
+                case ItemCategory.Wood: return new Color(0.44f, 0.25f, 0.12f, 1f);
+                case ItemCategory.Metal: return new Color(0.28f, 0.38f, 0.43f, 1f);
+                case ItemCategory.Paper: return new Color(0.55f, 0.49f, 0.31f, 1f);
+                case ItemCategory.Plastic: return new Color(0.18f, 0.43f, 0.49f, 1f);
+                case ItemCategory.Porcelain: return new Color(0.70f, 0.70f, 0.72f, 1f);
+                case ItemCategory.Glass: return new Color(0.16f, 0.53f, 0.48f, 1f);
+                case ItemCategory.Organic: return new Color(0.30f, 0.48f, 0.20f, 1f);
+                case ItemCategory.Tool: return new Color(0.54f, 0.26f, 0.16f, 1f);
+                case ItemCategory.KeyItem: return new Color(0.55f, 0.47f, 0.12f, 1f);
+                case ItemCategory.Consumable: return new Color(0.42f, 0.24f, 0.48f, 1f);
+                case ItemCategory.Equipment: return new Color(0.24f, 0.32f, 0.48f, 1f);
+                case ItemCategory.Quest: return new Color(0.48f, 0.43f, 0.20f, 1f);
+                default: return item.FallbackColor;
             }
         }
     }
