@@ -74,9 +74,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3f95145a82e81324584bcc62dac16993, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7719089705548807367}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3f95145a82e81324584bcc62dac16993, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 8631803761959603406}
   m_SourcePrefab: {fileID: 100100000, guid: 3f95145a82e81324584bcc62dac16993, type: 3}
 --- !u!1 &5803571293660843229 stripped
@@ -84,19 +81,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3f95145a82e81324584bcc62dac16993, type: 3}
   m_PrefabInstance: {fileID: 6650414249107665292}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7719089705548807367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5803571293660843229}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a04ccf13c2b4d97cb3c3d0b10020002, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventorySystem.SellTable
-  stationName: Computadora
 --- !u!65 &8631803761959603406
 BoxCollider:
   m_ObjectHideFlags: 0
