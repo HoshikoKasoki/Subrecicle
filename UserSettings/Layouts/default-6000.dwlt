@@ -1213,9 +1213,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -8454.039, y: 34.36593, z: -10.955444}
+    m_Target: {x: -8463.661, y: 33.855446, z: -10.2832775}
     speed: 2
-    m_Value: {x: -8454.039, y: 34.36593, z: -10.955444}
+    m_Value: {x: -8463.661, y: 33.855446, z: -10.2832775}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1261,13 +1261,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.08897635, y: 0.2395984, z: -0.022123257, w: 0.9665906}
+    m_Target: {x: 0.13043797, y: 0.008902943, z: -0.0012423695, w: 0.99147207}
     speed: 2
-    m_Value: {x: 0.08897142, y: 0.23958512, z: -0.022122031, w: 0.966537}
+    m_Value: {x: 0.1304307, y: 0.008902446, z: -0.0012423003, w: 0.99141675}
   m_Size:
-    m_Target: 4.914204
+    m_Target: 3.62429
     speed: 2
-    m_Value: 4.914204
+    m_Value: 3.62429
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1342,14 +1342,13 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: []
+      m_SelectedIDs:
+      - m_Data: 48422
       m_LastClickedID:
-        m_Data: 0
+        m_Data: 48422
       m_ExpandedIDs:
       - m_Data: -1336
-      - m_Data: 46974
-      - m_Data: 47132
-      - m_Data: 48410
+      - m_Data: 47142
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1582,7 +1581,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Proyect/Audios/efectos
+    - Assets/Proyect/Audios/Sonido Ambiente
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -1592,26 +1591,26 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Proyect/Audios/efectos
+  - Assets/Proyect/Audios/Sonido Ambiente
   m_LastFoldersGridSize: -1
   m_LastProjectPath: D:\proyectos nicol\Universidad\Semillero\JuegoCrafteo\Subrecicle
   m_LockTracker:
     m_IsLocked: 0
   m_LastLocalAssetsSearchArea: 1
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 95}
+    scrollPos: {x: 0, y: 79}
     m_SelectedIDs:
-    - m_Data: 63892
+    - m_Data: 50182
     m_LastClickedID:
-      m_Data: 63892
+      m_Data: 50182
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 49738
-    - m_Data: 49740
-    - m_Data: 49742
-    - m_Data: 49744
-    - m_Data: 49746
-    - m_Data: 50140
+    - m_Data: 49774
+    - m_Data: 49776
+    - m_Data: 49778
+    - m_Data: 49780
+    - m_Data: 49782
+    - m_Data: 50180
     - m_Data: 1000000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -1645,11 +1644,11 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 49738
-    - m_Data: 49740
-    - m_Data: 49742
-    - m_Data: 49744
-    - m_Data: 49746
+    - m_Data: 49774
+    - m_Data: 49776
+    - m_Data: 49778
+    - m_Data: 49780
+    - m_Data: 49782
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1676,8 +1675,9 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: []
-    m_LastClickedInstanceID: 0
+    m_SelectedInstanceIDs:
+    - m_Data: 48422
+    m_LastClickedInstanceID: 48422
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs:
     - m_Data: 55196
@@ -1790,7 +1790,7 @@ MonoBehaviour:
     m_DynamicPanelBehavior: 0
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 0
+  m_LastSelectedObjectID: 48422
 --- !u!114 &20
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1875,7 +1875,7 @@ MonoBehaviour:
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 0
+  m_LastVerticalScrollValue: 44
   m_GlobalObjectId: 
   m_InspectorMode: 0
   m_LockTracker:
