@@ -66,6 +66,7 @@
     <Compile Include="Assets\Proyect\Scripts\Player\Movement.cs" />
     <Compile Include="Assets\Proyect\Scripts\Inventory\ItemInstance.cs" />
     <Compile Include="Assets\Proyect\Scripts\Inventory\Hootbar.cs" />
+    <Compile Include="Assets\Proyect\Scripts\Audio\AmbienceSound.cs" />
     <Compile Include="Assets\Proyect\Scripts\Crafting\RecyclingMachine.cs" />
     <Compile Include="Assets\Proyect\Scripts\Player\PlayerInventoryController.cs" />
   </ItemGroup>
