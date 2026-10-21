@@ -60,6 +60,7 @@
     <Compile Include="Assets\Proyect\Scripts\Inventory\InventoryUIController.cs" />
     <Compile Include="Assets\Proyect\Scripts\Recolection\PickupItem.cs" />
     <Compile Include="Assets\Proyect\Scripts\Mar\WaterBuoyancy.cs" />
+    <Compile Include="Assets\Proyect\Scripts\Audio\CambioDeAudio.cs" />
     <Compile Include="Assets\Proyect\Scripts\Inventory\ItemCategory.cs" />
     <Compile Include="Assets\Proyect\Scripts\Inventory\HootbarUi.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />

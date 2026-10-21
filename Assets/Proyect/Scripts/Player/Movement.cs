@@ -27,6 +27,8 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private float limiteVertical = 89f;
 
     private CharacterController controller;
+    public AudioSource pasos;
+    public AudioSource audioSalto;
 
     private Vector2 movimientoInput;
     private Vector2 mouseInput;
@@ -95,7 +97,60 @@ public class FirstPersonController : MonoBehaviour
         Vector3 movimiento =
             transform.right * movimientoInput.x +
             transform.forward * movimientoInput.y;
+        // =========================================================
+        // AUDIO PASOS
+        // =========================================================
+        if (pasos != null && controller.isGrounded)
+        {
+            // Detectamos si el jugador se está moviendo y si además está presionando Shift (corriendo)
+            bool estaCorriendo = Keyboard.current != null && Keyboard.current.leftShiftKey.isPressed && movimientoInput.y > 0 && !agachado;
 
+            // Si hay entrada de movimiento
+            if (movimientoInput.magnitude > 0.1f)
+            {
+                // Ajustamos el pitch (velocidad del audio): más rápido si corre, normal si camina
+                pasos.pitch = estaCorriendo ? 1.5f : 1.0f; // Puedes cambiar 1.5f por el valor que mejor suene para ti
+
+                if (!pasos.isPlaying)
+                {
+                    pasos.Play();
+                }
+            }
+            else
+            {
+                if (pasos.isPlaying)
+                {
+                    pasos.Pause();
+                }
+            }
+        }
+        else
+        {
+            // Si está en el aire, saltando o nadando, pausamos el sonido y reseteamos el pitch
+            if (pasos != null && pasos.isPlaying)
+            {
+                pasos.Pause();
+                pasos.pitch = 1.0f;
+            }
+        }
+        // =========================================================
+       // Salto
+        if (Keyboard.current != null &&
+            Keyboard.current.spaceKey.wasPressedThisFrame &&
+            controller.isGrounded &&
+            !agachado)
+            {
+            velocidadVertical =
+                Mathf.Sqrt(
+                    fuerzaSalto * -2f * gravedad
+                );
+            if (audioSalto != null)
+            {
+                audioSalto.Play();
+            }
+            }
+        
+        
         if (locomotionMode != LocomotionMode.Grounded)
         {
             float verticalInput = 0f;
@@ -123,6 +178,8 @@ public class FirstPersonController : MonoBehaviour
             );
 
             return;
+
+
         }
 
         bool corriendo =

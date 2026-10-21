@@ -14,6 +14,8 @@ namespace InventorySystem
         [SerializeField] private float bobHeight = 0.12f;
         [SerializeField] private float bobSpeed = 2f;
         [SerializeField] private float rotationSpeed = 65f;
+        [Header("Audio")]
+        [SerializeField] private AudioClip sonidoRecoger;
 
         public ItemDefinition ItemDefinition => itemDefinition;
         public int Amount => amount;
@@ -52,6 +54,10 @@ namespace InventorySystem
 
             if (stored)
             {
+                if (sonidoRecoger != null)
+                {
+                    AudioSource.PlayClipAtPoint(sonidoRecoger, transform.position);
+                }
                 Destroy(gameObject);
                 return true;
             }

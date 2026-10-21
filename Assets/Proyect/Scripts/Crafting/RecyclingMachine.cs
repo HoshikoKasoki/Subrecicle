@@ -104,6 +104,13 @@ namespace InventorySystem
         [SerializeField]
         private List<CraftingRecipe> recipes =
             new List<CraftingRecipe>();
+        // =========================================================
+        // AUDIO DE LA MÁQUINA
+        // =========================================================
+        [Header("Audio de la Máquina")]
+        [SerializeField] private AudioSource audioSourceMaquina; 
+        [SerializeField] private AudioClip sonidoFabricando;     
+        [SerializeField] private AudioClip sonidoCompletado;
 
         // =========================================================
         // ESTADO
@@ -452,6 +459,16 @@ namespace InventorySystem
             Inventory inventory)
         {
             estaProcesando = true;
+            // =========================================================
+            // REPRODUCIR SONIDO DE FABRICACIÓN (EN BUCLE)
+            // =========================================================
+            if (audioSourceMaquina != null && sonidoFabricando != null)
+            {
+                audioSourceMaquina.clip = sonidoFabricando;
+                audioSourceMaquina.loop = true;
+                audioSourceMaquina.Play();
+            }
+            // =========================================================
 
             float elapsed = 0f;
 
@@ -502,6 +519,12 @@ namespace InventorySystem
         private void CompleteCraft(
             Inventory inventory)
         {
+            // Detener el sonido de fabricación
+            if (audioSourceMaquina != null && audioSourceMaquina.isPlaying)
+            {
+                audioSourceMaquina.Stop();
+                audioSourceMaquina.loop = false;
+            }
             if (inventory == null ||
                 recetaProcesando == null)
             {
@@ -693,6 +716,14 @@ namespace InventorySystem
             // ÉXITO
             // -----------------------------------------------------
 
+            // =========================================================
+            // REPRODUCIR SONIDO DE COMPLETADO (UNA SOLA VEZ)
+            // =========================================================
+            if (audioSourceMaquina != null && sonidoCompletado != null)
+            {
+                audioSourceMaquina.PlayOneShot(sonidoCompletado);
+            }
+            // =========================================================
             estadoActual =
                 "<color=#69c475>" +
                 "¡Fabricación completada!" +
@@ -980,6 +1011,13 @@ namespace InventorySystem
         private void CancelProcessing(
             string message)
         {
+            // Asegurarse de detener el sonido si se cancela a mitad de camino
+            if (audioSourceMaquina != null && audioSourceMaquina.isPlaying)
+            {
+                audioSourceMaquina.Stop();
+                audioSourceMaquina.loop = false;
+            }
+            
             recetaProcesando = null;
             cantidadProcesando = 0;
 
