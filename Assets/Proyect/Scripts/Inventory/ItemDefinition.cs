@@ -5,6 +5,9 @@ namespace InventorySystem
     [CreateAssetMenu(fileName = "NewItem", menuName = "Inventory/Item Definition")]
     public class ItemDefinition : ScriptableObject
     {
+        [Header("Prefab")]
+        [SerializeField] private GameObject worldPrefab;
+        public GameObject WorldPrefab => worldPrefab;
         [Header("Identity")]
         [SerializeField] private string itemID;
         [SerializeField] private string itemName;
