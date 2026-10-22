@@ -1,15 +1,18 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using TMPro;
 
 namespace InventorySystem
 {
-    /// <summary>
-    /// Controls the inventory UI authored in the scene.
-    /// This component never creates Canvas, panels, buttons, text or images.
-    /// </summary>
     public class InventoryUIController : MonoBehaviour
     {
+        [Header("Hotbar UI Integration")]
+        [SerializeField] private ToolHotbar hotbar;
+        [SerializeField] private Button[] hotbarCells;
+        [SerializeField] private Image[] hotbarCellImages;
+        [SerializeField] private TMP_Text[] hotbarItemLabels;
+
         [Header("Data")]
         [SerializeField] private Inventory inventory;
 
@@ -109,6 +112,12 @@ namespace InventorySystem
                 ToggleInventory();
             }
 
+            // Si el inventario está cerrado, escuchamos la tecla "Q" para soltar el objeto activo del hotbar
+            if (!IsOpen && Keyboard.current.qKey.wasPressedThisFrame)
+            {
+                DropActiveHotbarItemToGround();
+            }
+
             if (IsOpen && Keyboard.current.rKey.wasPressedThisFrame)
                 RotateSelected();
 
@@ -121,6 +130,60 @@ namespace InventorySystem
 
             if (IsOpen && activeRecyclingMachine != null)
                 RefreshRecipeDetails();
+        }
+
+        // Método para soltar el objeto del hotbar seleccionado directamente a la arena
+       private void DropActiveHotbarItemToGround()
+        {
+            if (hotbar == null)
+                return;
+
+            // SOLO permitimos botar el objeto si está actualmente visible/equipado en la mano
+            if (!hotbar.HasItemInHand)
+            {
+                return;
+            }
+
+            int activeSlot = hotbar.SelectedSlot;
+            string currentTool = hotbar.GetTool(activeSlot);
+            int amountToDrop = hotbar.GetAmount(activeSlot);
+
+            if (!string.IsNullOrEmpty(currentTool) && amountToDrop > 0)
+            {
+                ItemDefinition defToDrop = FindItemDefinitionSafe(currentTool);
+                
+                // Restamos 1 unidad del hotbar
+                hotbar.RemoveAmount(activeSlot, 1);
+                RefreshHotbarVisuals();
+
+                // Si aún quedan más unidades en ese slot, actualizamos la mano para mantener la vista de la lata
+                if (hotbar.GetAmount(activeSlot) > 0)
+                {
+                    hotbar.UpdateEquippedHand();
+                }
+
+                if (defToDrop != null && defToDrop.WorldPrefab != null)
+                {
+                    // Instanciamos 1 unidad frente al jugador en la arena
+                    Vector3 spawnPos = transform.position + transform.forward * 1.5f + Vector3.up * 0.5f;
+                    GameObject droppedItem = Instantiate(defToDrop.WorldPrefab, spawnPos, Quaternion.identity);
+
+                    Rigidbody rb = droppedItem.GetComponent<Rigidbody>();
+                    if (rb != null)
+                    {
+                        rb.isKinematic = false;
+                        rb.AddForce(transform.forward * 2f + Vector3.up * 2f, ForceMode.Impulse);
+                    }
+
+                    Collider col = droppedItem.GetComponent<Collider>();
+                    if (col != null)
+                    {
+                        col.enabled = true;
+                    }
+
+                    Debug.Log("1 unidad de " + defToDrop.ItemName + " soltada a la arena.");
+                }
+            }
         }
 
         public void ToggleInventory()
@@ -203,6 +266,16 @@ namespace InventorySystem
 
         private void BindSceneButtons()
         {
+            if (hotbarCells != null)
+            {
+                for (int i = 0; i < hotbarCells.Length; i++)
+                {
+                    int hotbarIndex = i;
+                    if (hotbarCells[i] != null)
+                        hotbarCells[i].onClick.AddListener(() => ClickHotbarCell(hotbarIndex));
+                }
+            }
+
             if (minusButton != null)
                 minusButton.onClick.AddListener(DecreaseCraftAmount);
             if (plusButton != null)
@@ -268,6 +341,7 @@ namespace InventorySystem
 
             RefreshCells();
             RefreshItemVisuals();
+            RefreshHotbarVisuals();
 
             if (titleText != null)
             {
@@ -382,6 +456,64 @@ namespace InventorySystem
                 }
 
                 visualIndex++;
+            }
+        }
+
+        private void RefreshHotbarVisuals()
+        {
+            if (hotbar == null || hotbarCellImages == null)
+                return;
+
+            for (int i = 0; i < ToolHotbar.SlotCount; i++)
+            {
+                if (i >= hotbarCellImages.Length || hotbarCellImages[i] == null)
+                    continue;
+
+                string toolId = hotbar.GetTool(i);
+                int amount = hotbar.GetAmount(i);
+
+                if (!string.IsNullOrEmpty(toolId) && amount > 0)
+                {
+                    ItemDefinition def = FindItemDefinitionSafe(toolId);
+                    if (def != null)
+                    {
+                        // 1. Color / Icono del slot
+                        if (def.Icon != null)
+                        {
+                            hotbarCellImages[i].sprite = def.Icon;
+                            hotbarCellImages[i].color = Color.white;
+                        }
+                        else
+                        {
+                            hotbarCellImages[i].sprite = null;
+                            hotbarCellImages[i].color = def.FallbackColor;
+                        }
+
+                        // 2. Texto con nombre y cantidad (ej. LATA DE ALUMINIO x2)
+                        if (hotbarItemLabels != null && i < hotbarItemLabels.Length && hotbarItemLabels[i] != null)
+                        {
+                            string textLabel = def.ItemName.ToUpperInvariant();
+                            if (amount > 1)
+                            {
+                                textLabel += " x" + amount;
+                            }
+
+                            hotbarItemLabels[i].text = textLabel;
+                            hotbarItemLabels[i].gameObject.SetActive(true);
+                        }
+                    }
+                }
+                else
+                {
+                    // Si la casilla está vacía
+                    hotbarCellImages[i].sprite = null;
+                    hotbarCellImages[i].color = new Color(0.16f, 0.19f, 0.18f, 1f);
+
+                    if (hotbarItemLabels != null && i < hotbarItemLabels.Length && hotbarItemLabels[i] != null)
+                    {
+                        hotbarItemLabels[i].text = string.Empty;
+                    }
+                }
             }
         }
 
@@ -596,6 +728,63 @@ namespace InventorySystem
             }
         }
 
+        private void ClickHotbarCell(int hotbarIndex)
+        {
+            if (hotbar == null || inventory == null)
+                return;
+
+            string currentHotbarTool = hotbar.GetTool(hotbarIndex);
+            int currentHotbarAmount = hotbar.GetAmount(hotbarIndex);
+
+            if (selectedItem != null)
+            {
+                if (selectedItem.Size.x == 1 && selectedItem.Size.y == 1)
+                {
+                    ItemDefinition defToPut = selectedItem.Definition;
+                    int amountToPut = selectedItem.Amount; // Tomamos toda la cantidad que tenía el item seleccionado
+
+                    if (inventory.TryRemoveItem(selectedItem))
+                    {
+                        // Si ya había algo en el hotbar, lo devolvemos al inventario con su cantidad respectiva
+                        if (!string.IsNullOrEmpty(currentHotbarTool))
+                        {
+                            ItemDefinition oldDef = FindItemDefinitionSafe(currentHotbarTool);
+                            if (oldDef != null)
+                            {
+                                inventory.TryAddItem(oldDef, currentHotbarAmount);
+                            }
+                        }
+
+                        // Colocamos el nuevo objeto con su cantidad total en el hotbar
+                        hotbar.SetTool(hotbarIndex, defToPut.ItemID, amountToPut);
+                        selectedItem = null;
+                        RefreshInventory();
+                    }
+                }
+                else
+                {
+                    Debug.Log("Este objeto es muy grande. Solo se pueden colocar objetos de 1x1 en el hotbar.");
+                }
+            }
+            else if (!string.IsNullOrEmpty(currentHotbarTool))
+            {
+                ItemDefinition defToReturn = FindItemDefinitionSafe(currentHotbarTool);
+                if (defToReturn != null)
+                {
+                    hotbar.ClearSlot(hotbarIndex);
+
+                    // Devolvemos todas las unidades que estaban en el hotbar de regreso al inventario
+                    if (!inventory.TryAddItem(defToReturn, currentHotbarAmount))
+                    {
+                        // Si no hay espacio, lo restauramos en el hotbar
+                        hotbar.SetTool(hotbarIndex, defToReturn.ItemID, currentHotbarAmount);
+                    }
+
+                    RefreshInventory();
+                }
+            }
+        }
+
         private void ClickCell(int cellIndex)
         {
             if (inventory == null || cellIndex < 0 || cellIndex >= inventory.Capacity)
@@ -667,9 +856,13 @@ namespace InventorySystem
             if (!IsOpen)
                 return;
             if (activeRecyclingMachine != null)
+            {
                 RefreshRecipeDetails();
+            }
             else if (activeSellTable != null)
+            {
                 RefreshSellUI();
+            }
         }
 
         private static Color ItemColor(ItemDefinition item)
@@ -690,6 +883,27 @@ namespace InventorySystem
                 case ItemCategory.Quest: return new Color(0.48f, 0.43f, 0.20f, 1f);
                 default: return item.FallbackColor;
             }
+        }
+
+        private ItemDefinition FindItemDefinitionSafe(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId))
+                return null;
+
+            foreach (var item in inventory.Items)
+            {
+                if (item != null && item.Definition != null && item.Definition.ItemID == itemId)
+                    return item.Definition;
+            }
+
+            ItemDefinition[] allDefinitions = Resources.FindObjectsOfTypeAll<ItemDefinition>();
+            foreach (var def in allDefinitions)
+            {
+                if (def != null && def.ItemID == itemId)
+                    return def;
+            }
+
+            return null;
         }
     }
 }
