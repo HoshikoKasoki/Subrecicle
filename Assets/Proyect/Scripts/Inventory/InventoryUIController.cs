@@ -59,6 +59,8 @@ namespace InventorySystem
         private PlayerInventoryController playerInventory;
         private FirstPersonController movement;
         private Wallet wallet;
+        private ToolHotbar hotbar;
+        private ToolHotbarUI hotbarUI;
         private SellTable activeSellTable;
         private RecyclingMachine activeRecyclingMachine;
         private SceneView activeView;
@@ -75,6 +77,8 @@ namespace InventorySystem
             playerInventory = GetComponent<PlayerInventoryController>();
             movement = GetComponent<FirstPersonController>();
             wallet = GetComponent<Wallet>();
+            hotbar = GetComponent<ToolHotbar>();
+            hotbarUI = GetComponent<ToolHotbarUI>();
 
             BindSceneView(inventoryView);
             BindSceneView(saleView);
@@ -112,6 +116,12 @@ namespace InventorySystem
                     : playerInventory.InteractionMessage;
             }
 
+            if (!IsOpen && Mouse.current != null &&
+                Mouse.current.rightButton.wasPressedThisFrame)
+            {
+                DropSelectedHotbarItem();
+            }
+
             if (Keyboard.current == null)
                 return;
 
@@ -132,6 +142,46 @@ namespace InventorySystem
 
             if (IsOpen && activeRecyclingMachine != null)
                 RefreshRecipeDetails();
+        }
+
+        private void DropSelectedHotbarItem()
+        {
+            if (hotbar == null || !hotbar.HasItemInHand)
+                return;
+
+            int slotIndex = hotbar.SelectedSlot;
+            string itemId = hotbar.GetTool(slotIndex);
+            int amount = hotbar.GetAmount(slotIndex);
+            if (string.IsNullOrEmpty(itemId) || amount <= 0)
+                return;
+
+            ItemDefinition definition = FindItemDefinition(itemId);
+            if (definition == null || definition.WorldPrefab == null)
+                return;
+
+            Vector3 spawnPosition = transform.position + transform.forward * 1.5f + Vector3.up * 0.5f;
+            GameObject droppedObject = Instantiate(
+                definition.WorldPrefab,
+                spawnPosition,
+                Quaternion.identity);
+
+            PickupItem pickup = droppedObject.GetComponentInChildren<PickupItem>(true);
+            if (pickup != null)
+                pickup.SetAmount(1);
+
+            foreach (Collider itemCollider in droppedObject.GetComponentsInChildren<Collider>(true))
+                itemCollider.enabled = true;
+
+            Rigidbody rigidbody = droppedObject.GetComponentInChildren<Rigidbody>(true);
+            if (rigidbody != null)
+            {
+                rigidbody.isKinematic = false;
+                rigidbody.AddForce(transform.forward * 2f + Vector3.up * 2f, ForceMode.Impulse);
+            }
+
+            hotbar.RemoveAmount(slotIndex, 1);
+            if (hotbar.GetAmount(slotIndex) > 0)
+                hotbar.UpdateEquippedHand();
         }
 
         public void ToggleInventory()
@@ -199,6 +249,8 @@ namespace InventorySystem
 
             if (interactionText != null)
                 interactionText.gameObject.SetActive(true);
+            if (hotbarUI != null)
+                hotbarUI.SetInventoryState(false, false);
             if (movement != null)
                 movement.SetInputLocked(false);
 
@@ -222,6 +274,8 @@ namespace InventorySystem
 
             if (interactionText != null)
                 interactionText.gameObject.SetActive(false);
+            if (hotbarUI != null)
+                hotbarUI.SetInventoryState(true, view == inventoryView);
             if (movement != null)
                 movement.SetInputLocked(true);
 
@@ -397,34 +451,34 @@ namespace InventorySystem
             visual.anchorMin = first.anchorMin;
             visual.anchorMax = first.anchorMax;
             visual.pivot = first.pivot;
-            visual.anchoredPosition = first.anchoredPosition;
-
-            float width = first.rect.width;
-            float height = first.rect.height;
 
             int endX = item.Position.x + item.Size.x - 1;
             int endY = item.Position.y + item.Size.y - 1;
-            if (endX < inventory.Width)
-            {
-                int endIndex = item.Position.y * inventory.Width + endX;
-                RectTransform last = endIndex < view.inventoryCells.Length && view.inventoryCells[endIndex] != null
+            int endIndex = endY * inventory.Width + endX;
+            RectTransform last = endX >= 0 && endX < inventory.Width &&
+                endY >= 0 && endY < inventory.Height &&
+                endIndex >= 0 && endIndex < view.inventoryCells.Length &&
+                view.inventoryCells[endIndex] != null
                     ? view.inventoryCells[endIndex].transform as RectTransform
-                    : null;
-                if (last != null)
-                    width = Mathf.Abs(last.anchoredPosition.x - first.anchoredPosition.x) + last.rect.width;
-            }
+                    : first;
 
-            if (endY < inventory.Height)
-            {
-                int endIndex = endY * inventory.Width + item.Position.x;
-                RectTransform last = endIndex < view.inventoryCells.Length && view.inventoryCells[endIndex] != null
-                    ? view.inventoryCells[endIndex].transform as RectTransform
-                    : null;
-                if (last != null)
-                    height = Mathf.Abs(last.anchoredPosition.y - first.anchoredPosition.y) + last.rect.height;
-            }
+            if (last == null)
+                last = first;
 
-            visual.sizeDelta = new Vector2(width, height);
+            // El RectTransform se ancla por su pivote. Al aumentar sólo el tamaño
+            // desde la primera celda, un objeto 2x2 crecía hacia fuera del grid.
+            // Calculamos los límites reales de la primera y última celda para que
+            // el visual quede centrado exactamente sobre todas las que ocupa.
+            Vector2 firstMin = first.anchoredPosition - Vector2.Scale(first.rect.size, first.pivot);
+            Vector2 firstMax = firstMin + first.rect.size;
+            Vector2 lastMin = last.anchoredPosition - Vector2.Scale(last.rect.size, last.pivot);
+            Vector2 lastMax = lastMin + last.rect.size;
+            Vector2 visualMin = Vector2.Min(firstMin, lastMin);
+            Vector2 visualMax = Vector2.Max(firstMax, lastMax);
+            Vector2 visualSize = visualMax - visualMin;
+
+            visual.sizeDelta = visualSize;
+            visual.anchoredPosition = visualMin + Vector2.Scale(visualSize, visual.pivot);
         }
 
         private void RefreshRecipeList()
@@ -631,6 +685,70 @@ namespace InventorySystem
             }
         }
 
+        public void ClickHotbarSlot(int hotbarIndex)
+        {
+            if (!IsOpen || activeView != inventoryView || hotbar == null || inventory == null ||
+                hotbarIndex < 0 || hotbarIndex >= ToolHotbar.SlotCount)
+            {
+                return;
+            }
+
+            string currentToolId = hotbar.GetTool(hotbarIndex);
+            int currentAmount = hotbar.GetAmount(hotbarIndex);
+
+            if (selectedItem != null)
+            {
+                if (selectedItem.Size != Vector2Int.one || selectedItem.Definition == null)
+                {
+                    Debug.Log("Sólo se pueden colocar objetos de 1x1 en el Hotbar.", this);
+                    return;
+                }
+
+                ItemDefinition selectedDefinition = selectedItem.Definition;
+                int selectedAmount = selectedItem.Amount;
+                ItemDefinition previousDefinition = string.IsNullOrEmpty(currentToolId)
+                    ? null
+                    : FindItemDefinition(currentToolId);
+
+                if (!string.IsNullOrEmpty(currentToolId) && previousDefinition == null)
+                {
+                    Debug.LogWarning("No se encontró la definición del objeto que estaba en el Hotbar.", this);
+                    return;
+                }
+
+                if (!inventory.TryRemoveItem(selectedItem))
+                    return;
+
+                if (previousDefinition != null && !inventory.TryAddItem(previousDefinition, currentAmount))
+                {
+                    inventory.TryAddItem(selectedDefinition, selectedAmount);
+                    Debug.LogWarning("No hay espacio para intercambiar el objeto del Hotbar.", this);
+                    return;
+                }
+
+                hotbar.SetTool(hotbarIndex, selectedDefinition.ItemID, selectedAmount);
+                selectedItem = null;
+                RefreshInventory();
+                return;
+            }
+
+            if (string.IsNullOrEmpty(currentToolId) || currentAmount <= 0)
+                return;
+
+            ItemDefinition definitionToReturn = FindItemDefinition(currentToolId);
+            if (definitionToReturn == null)
+                return;
+
+            hotbar.ClearSlot(hotbarIndex);
+            if (!inventory.TryAddItem(definitionToReturn, currentAmount))
+            {
+                hotbar.SetTool(hotbarIndex, currentToolId, currentAmount);
+                Debug.LogWarning("No hay espacio para devolver el objeto del Hotbar al inventario.", this);
+            }
+
+            RefreshInventory();
+        }
+
         private void ClickCell(int cellIndex)
         {
             if (inventory == null || cellIndex < 0 || cellIndex >= inventory.Capacity)
@@ -700,6 +818,20 @@ namespace InventorySystem
             }
 
             return false;
+        }
+
+        private static ItemDefinition FindItemDefinition(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId))
+                return null;
+
+            foreach (ItemDefinition definition in Resources.FindObjectsOfTypeAll<ItemDefinition>())
+            {
+                if (definition != null && definition.ItemID == itemId)
+                    return definition;
+            }
+
+            return null;
         }
 
         public void RefreshStationUI()

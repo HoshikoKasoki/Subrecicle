@@ -21,6 +21,11 @@ namespace InventorySystem
         public int Amount => amount;
         public string DisplayName => itemDefinition == null ? "Objeto desconocido" : itemDefinition.ItemName;
 
+        public void SetAmount(int newAmount)
+        {
+            amount = Mathf.Max(1, newAmount);
+        }
+
         private Vector3 startPosition;
 
         private void Awake()

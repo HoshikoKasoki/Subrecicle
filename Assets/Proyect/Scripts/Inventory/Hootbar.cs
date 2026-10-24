@@ -61,6 +61,8 @@ namespace InventorySystem
             toolSlots[slot].amount = amount;
             OnHotbarChanged?.Invoke();
 
+            if (slot == selectedSlot)
+                UpdateEquippedHand();
         }
 
         public void RemoveAmount(int slot, int amountToRemove)
