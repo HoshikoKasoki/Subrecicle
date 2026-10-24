@@ -10,14 +10,35 @@ namespace InventorySystem
     {
         [Header("Scene UI")]
         [SerializeField] private GameObject hotbarRoot;
+        [SerializeField] private Canvas hotbarCanvas;
+        [SerializeField] private Button[] slotButtons;
+        [SerializeField] private Image[] slotBackgrounds;
+        [SerializeField] private Image[] slotIcons;
+        [SerializeField] private Text[] slotAmounts;
         [SerializeField] private Outline[] selectionOutlines;
+        [SerializeField] private GameObject crosshair;
+
+        [Header("Orden de dibujo")]
+        [SerializeField] private int gameplaySortingOrder = 10;
+        [SerializeField] private int inventorySortingOrder = 40;
 
         private ToolHotbar hotbar;
+        private InventoryUIController inventoryUI;
 
         private void Awake()
         {
             hotbar = GetComponent<ToolHotbar>();
-            if (hotbarRoot == null || selectionOutlines == null ||
+            inventoryUI = GetComponent<InventoryUIController>();
+            if (hotbarCanvas == null && hotbarRoot != null)
+                hotbarCanvas = hotbarRoot.GetComponent<Canvas>();
+
+            BindSlotButtons();
+
+            if (hotbarRoot == null || hotbarCanvas == null || slotButtons == null ||
+                slotButtons.Length < ToolHotbar.SlotCount || slotBackgrounds == null ||
+                slotBackgrounds.Length < ToolHotbar.SlotCount || slotIcons == null ||
+                slotIcons.Length < ToolHotbar.SlotCount || slotAmounts == null ||
+                slotAmounts.Length < ToolHotbar.SlotCount || selectionOutlines == null ||
                 selectionOutlines.Length < ToolHotbar.SlotCount)
                 Debug.LogWarning("ToolHotbarUI necesita referencias a la barra creada en la escena.", this);
         }
@@ -30,6 +51,7 @@ namespace InventorySystem
 
         private void Start()
         {
+            SetInventoryState(false, false);
             RefreshVisuals();
         }
 
@@ -39,17 +61,95 @@ namespace InventorySystem
                 hotbar.OnHotbarChanged -= RefreshVisuals;
         }
 
-        private void RefreshVisuals()
+        public void SetInventoryState(bool interfaceOpen, bool allowInventoryTransfer)
         {
-            if (hotbar == null || selectionOutlines == null)
+            if (hotbarCanvas != null)
+                hotbarCanvas.sortingOrder = allowInventoryTransfer
+                    ? inventorySortingOrder
+                    : gameplaySortingOrder;
+
+            if (crosshair != null)
+                crosshair.SetActive(!interfaceOpen);
+
+            if (slotButtons == null)
                 return;
 
-            int count = Mathf.Min(ToolHotbar.SlotCount, selectionOutlines.Length);
+            int count = Mathf.Min(ToolHotbar.SlotCount, slotButtons.Length);
             for (int i = 0; i < count; i++)
             {
-                if (selectionOutlines[i] != null)
-                    selectionOutlines[i].enabled = i == hotbar.SelectedSlot;
+                if (slotButtons[i] != null)
+                    slotButtons[i].interactable = allowInventoryTransfer;
             }
+        }
+
+        private void BindSlotButtons()
+        {
+            if (slotButtons == null)
+                return;
+
+            for (int i = 0; i < slotButtons.Length; i++)
+            {
+                int slotIndex = i;
+                if (slotButtons[i] != null)
+                    slotButtons[i].onClick.AddListener(() => ClickSlot(slotIndex));
+            }
+        }
+
+        private void ClickSlot(int slotIndex)
+        {
+            if (inventoryUI != null && inventoryUI.IsOpen)
+                inventoryUI.ClickHotbarSlot(slotIndex);
+        }
+
+        private void RefreshVisuals()
+        {
+            if (hotbar == null)
+                return;
+
+            int count = ToolHotbar.SlotCount;
+            for (int i = 0; i < count; i++)
+            {
+                if (selectionOutlines != null && i < selectionOutlines.Length && selectionOutlines[i] != null)
+                    selectionOutlines[i].enabled = i == hotbar.SelectedSlot;
+
+                string itemId = hotbar.GetTool(i);
+                int amount = hotbar.GetAmount(i);
+                ItemDefinition definition = FindItemDefinition(itemId);
+
+                if (slotBackgrounds != null && i < slotBackgrounds.Length && slotBackgrounds[i] != null)
+                {
+                    slotBackgrounds[i].color = definition != null && definition.Icon == null
+                        ? definition.FallbackColor
+                        : new Color32(28, 35, 34, 225);
+                }
+
+                if (slotIcons != null && i < slotIcons.Length && slotIcons[i] != null)
+                {
+                    slotIcons[i].sprite = definition == null ? null : definition.Icon;
+                    slotIcons[i].enabled = definition != null && definition.Icon != null;
+                    slotIcons[i].color = Color.white;
+                }
+
+                if (slotAmounts != null && i < slotAmounts.Length && slotAmounts[i] != null)
+                {
+                    slotAmounts[i].text = amount > 1 ? "x" + amount : string.Empty;
+                    slotAmounts[i].gameObject.SetActive(amount > 1);
+                }
+            }
+        }
+
+        private static ItemDefinition FindItemDefinition(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId))
+                return null;
+
+            foreach (ItemDefinition definition in Resources.FindObjectsOfTypeAll<ItemDefinition>())
+            {
+                if (definition != null && definition.ItemID == itemId)
+                    return definition;
+            }
+
+            return null;
         }
     }
 }
