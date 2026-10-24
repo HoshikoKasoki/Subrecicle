@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb2bd034729c82e408fa886ed1dbd5ba, type: 3}
   m_Name: MetalCan
   m_EditorClassIdentifier: Assembly-CSharp::InventorySystem.ItemDefinition
+  worldPrefab: {fileID: 7603603492251738022, guid: 3c07c0845534d184f90aaacd35a65b89, type: 3}
   itemID: MAT-METAL-001
   itemName: Lata de aluminio
-  description: Envase metálico ligero. Recurso reciclable y apilable.
+  description: "Envase met\xE1lico ligero. Recurso reciclable y apilable."
   category: 1
   size: {x: 1, y: 1}
   stackable: 1
