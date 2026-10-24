@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace InventorySystem
 {
@@ -25,6 +24,12 @@ namespace InventorySystem
     /// </summary>
     public class RecyclingMachine : MonoBehaviour
     {
+        public enum FabricatorCanvas
+        {
+            Fabricadora1,
+            Fabricadora2
+        }
+
         // =========================================================
         // RECIPE PART
         // =========================================================
@@ -89,12 +94,10 @@ namespace InventorySystem
         [SerializeField]
         private string stationName = "Recicladora";
 
-        [Header("Interacción")]
-        [SerializeField, Min(0.5f)]
-        private float interactionDistance = 3.5f;
-
+        [Header("Interfaz")]
+        [Tooltip("Canvas físico que abrirá esta máquina al hacer clic izquierdo.")]
         [SerializeField]
-        private LayerMask interactionLayers = ~0;
+        private FabricatorCanvas interfaceCanvas = FabricatorCanvas.Fabricadora1;
 
         [Header("Procesamiento")]
         [SerializeField, Min(0f)]
@@ -134,6 +137,14 @@ namespace InventorySystem
             get
             {
                 return stationName;
+            }
+        }
+
+        public FabricatorCanvas InterfaceCanvas
+        {
+            get
+            {
+                return interfaceCanvas;
             }
         }
 
@@ -188,64 +199,6 @@ namespace InventorySystem
         {
             inventoryUI =
                 FindFirstObjectByType<InventoryUIController>();
-        }
-
-        private void Update()
-        {
-            if (estaProcesando)
-                return;
-
-            if (inventoryUI != null &&
-                inventoryUI.IsOpen)
-            {
-                return;
-            }
-
-            if (Keyboard.current == null)
-                return;
-
-            if (!Keyboard.current.eKey.wasPressedThisFrame)
-                return;
-
-            TryInteractFromPlayer();
-        }
-
-        // =========================================================
-        // INTERACCIÓN
-        // =========================================================
-
-        private void TryInteractFromPlayer()
-        {
-            Camera cam = Camera.main;
-
-            if (cam == null)
-                return;
-
-            Ray ray = new Ray(
-                cam.transform.position,
-                cam.transform.forward
-            );
-
-            RaycastHit hit;
-
-            bool detected = Physics.Raycast(
-                ray,
-                out hit,
-                interactionDistance,
-                interactionLayers,
-                QueryTriggerInteraction.Ignore
-            );
-
-            if (!detected)
-                return;
-
-            RecyclingMachine machine =
-                hit.collider.GetComponentInParent<RecyclingMachine>();
-
-            if (machine != this)
-                return;
-
-            Interactuar();
         }
 
         public void Interactuar()

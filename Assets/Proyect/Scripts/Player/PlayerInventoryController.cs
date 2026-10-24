@@ -42,26 +42,27 @@ namespace InventorySystem
         {
             FindInteraction();
             if (focusedPickup != null)
-                InteractionMessage = $"[E] RECUPERAR  {focusedPickup.DisplayName}" + (focusedPickup.Amount > 1 ? $"  x{focusedPickup.Amount}" : string.Empty);
+                InteractionMessage = $"[CLIC IZQ.] RECOGER  {focusedPickup.DisplayName}" +
+                    (focusedPickup.Amount > 1 ? $"  x{focusedPickup.Amount}" : string.Empty);
             else if (focusedSellTable != null)
-                InteractionMessage = $"[E] VENDER OBJETOS  //  {focusedSellTable.StationName}";
+                InteractionMessage = $"[CLIC IZQ.] VENDER OBJETOS  //  {focusedSellTable.StationName}";
             else if (focusedRecyclingMachine != null)
                 InteractionMessage = focusedRecyclingMachine.IsProcessing
                     ? $"{focusedRecyclingMachine.StationName}  //  PROCESANDO"
-                    : $"[E] ABRIR RECICLADORA  //  {focusedRecyclingMachine.StationName}";
+                    : $"[CLIC IZQ.] ABRIR FABRICADORA  //  {focusedRecyclingMachine.StationName}";
             else
                 InteractionMessage = string.Empty;
 
-            HandlePickup();
+            HandleInteraction();
         }
 
-        private void HandlePickup()
+        private void HandleInteraction()
         {
             InventoryUIController inventoryUI = GetComponent<InventoryUIController>();
             if (inventoryUI != null && inventoryUI.IsOpen)
                 return;
 
-            if (Keyboard.current == null || !Keyboard.current.eKey.wasPressedThisFrame)
+            if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame)
                 return;
 
             if (inventory == null)
@@ -69,9 +70,10 @@ namespace InventorySystem
 
             if (focusedPickup != null && !focusedPickup.Pickup(inventory))
                 InteractionMessage = "INVENTARIO SIN ESPACIO";
-
-            if (focusedSellTable != null && inventoryUI != null)
+            else if (focusedSellTable != null && inventoryUI != null)
                 inventoryUI.OpenSellMode(focusedSellTable);
+            else if (focusedRecyclingMachine != null)
+                focusedRecyclingMachine.Interactuar();
         }
 
         private void FindInteraction()
@@ -98,10 +100,17 @@ namespace InventorySystem
             {
                 focusedPickup = hit.collider.GetComponentInParent<PickupItem>();
                 if (focusedPickup == null)
-                    focusedSellTable = hit.collider.GetComponentInParent<SellTable>();
+                {
+                    // Algunas máquinas reutilizan un prefab que también posee
+                    // SellTable. La función de fabricadora debe tener prioridad.
+                    focusedRecyclingMachine =
+                        hit.collider.GetComponentInParent<RecyclingMachine>();
+                    if (focusedRecyclingMachine == null)
+                        focusedSellTable = hit.collider.GetComponentInParent<SellTable>();
+                }
             }
 
-            if (focusedPickup != null || focusedSellTable != null)
+            if (focusedPickup != null || focusedSellTable != null || focusedRecyclingMachine != null)
                 return;
 
             // Las estaciones usan la misma mirada que RecyclingMachine para que

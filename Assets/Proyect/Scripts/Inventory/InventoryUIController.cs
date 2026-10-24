@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -5,54 +6,54 @@ using UnityEngine.UI;
 namespace InventorySystem
 {
     /// <summary>
-    /// Controls the inventory UI authored in the scene.
-    /// This component never creates Canvas, panels, buttons, text or images.
+    /// Actualiza las vistas de inventario creadas físicamente en la escena.
+    /// No crea, clona ni reordena elementos de interfaz en tiempo de ejecución.
     /// </summary>
     public class InventoryUIController : MonoBehaviour
     {
-        [Header("Data")]
+        [Serializable]
+        private sealed class SceneView
+        {
+            public GameObject canvasRoot;
+
+            [Header("Textos")]
+            public Text titleText;
+            public Text modeText;
+            public Text detailsText;
+            public Text infoTitle;
+            public Text quantityText;
+            public Text actionButtonLabel;
+
+            [Header("Botones")]
+            public Button closeButton;
+            public Button actionButton;
+            public Button minusButton;
+            public Button plusButton;
+            public Button[] inventoryCells = Array.Empty<Button>();
+            public Button[] recipeButtons = Array.Empty<Button>();
+            public Text[] recipeButtonLabels = Array.Empty<Text>();
+            public Outline[] recipeOutlines = Array.Empty<Outline>();
+
+            [Header("Objetos del inventario")]
+            public RectTransform[] itemVisuals = Array.Empty<RectTransform>();
+            public Image[] itemImages = Array.Empty<Image>();
+            public Image[] itemIcons = Array.Empty<Image>();
+            public Outline[] itemOutlines = Array.Empty<Outline>();
+            public Text[] itemLabels = Array.Empty<Text>();
+            public Text[] itemCounts = Array.Empty<Text>();
+        }
+
+        [Header("Datos")]
         [SerializeField] private Inventory inventory;
 
-        [Header("Scene UI")]
-        [SerializeField] private GameObject shadePanel;
-        [SerializeField] private GameObject casePanel;
-        [SerializeField] private GameObject recipePanelObject;
-        [SerializeField] private RectTransform grid;
-        [SerializeField] private RectTransform detailsPanelRect;
+        [Header("Canvas físicos de la escena")]
+        [SerializeField] private SceneView inventoryView = new SceneView();
+        [SerializeField] private SceneView saleView = new SceneView();
+        [SerializeField] private SceneView fabricatorView1 = new SceneView();
+        [SerializeField] private SceneView fabricatorView2 = new SceneView();
 
-        [Header("Scene text")]
-        [SerializeField] private Text titleText;
-        [SerializeField] private Text modeText;
-        [SerializeField] private Text detailsText;
-        [SerializeField] private Text infoTitle;
+        [Header("HUD / Hotbar")]
         [SerializeField] private Text interactionText;
-        [SerializeField] private Text quantityText;
-
-        [Header("Scene buttons")]
-        [SerializeField] private Button actionButton;
-        [SerializeField] private Button minusButton;
-        [SerializeField] private Button plusButton;
-        [SerializeField] private Button[] inventoryCells;
-        [SerializeField] private Image[] inventoryCellImages;
-        [SerializeField] private Button[] recipeButtons;
-        [SerializeField] private Text[] recipeButtonLabels;
-
-        [Header("Scene item visuals")]
-        [SerializeField] private RectTransform[] itemVisuals;
-        [SerializeField] private Image[] itemImages;
-        [SerializeField] private Image[] itemIcons;
-        [SerializeField] private Outline[] itemOutlines;
-        [SerializeField] private Text[] itemLabels;
-        [SerializeField] private Text[] itemCounts;
-
-        [Header("Layout")]
-        [SerializeField] private float cellSize = 92f;
-        [SerializeField] private float cellGap = 5f;
-        [SerializeField] private Vector2 normalGridPosition = new Vector2(145f, -125f);
-        [SerializeField] private Vector2 recycleGridPosition = new Vector2(30f, -125f);
-        [SerializeField] private Vector2 normalDetailsPosition = new Vector2(-145f, -125f);
-        [SerializeField] private Vector2 recycleDetailsPosition = new Vector2(-30f, -125f);
-        [SerializeField] private Vector2 detailsSize = new Vector2(350f, 450f);
 
         private ItemInstance selectedItem;
         private PlayerInventoryController playerInventory;
@@ -60,6 +61,7 @@ namespace InventorySystem
         private Wallet wallet;
         private SellTable activeSellTable;
         private RecyclingMachine activeRecyclingMachine;
+        private SceneView activeView;
         private int selectedRecipeIndex;
         private int craftAmount = 1;
 
@@ -74,7 +76,10 @@ namespace InventorySystem
             movement = GetComponent<FirstPersonController>();
             wallet = GetComponent<Wallet>();
 
-            BindSceneButtons();
+            BindSceneView(inventoryView);
+            BindSceneView(saleView);
+            BindSceneView(fabricatorView1);
+            BindSceneView(fabricatorView2);
             ValidateSceneUi();
         }
 
@@ -100,24 +105,30 @@ namespace InventorySystem
 
         private void Update()
         {
-            if (Keyboard.current == null)
-                return;
-
-            if (Keyboard.current.tabKey.wasPressedThisFrame ||
-                (Keyboard.current.escapeKey.wasPressedThisFrame && IsOpen))
-            {
-                ToggleInventory();
-            }
-
-            if (IsOpen && Keyboard.current.rKey.wasPressedThisFrame)
-                RotateSelected();
-
             if (!IsOpen && interactionText != null)
             {
                 interactionText.text = playerInventory == null
                     ? string.Empty
                     : playerInventory.InteractionMessage;
             }
+
+            if (Keyboard.current == null)
+                return;
+
+            if (Keyboard.current.eKey.wasPressedThisFrame)
+            {
+                ToggleInventory();
+                return;
+            }
+
+            if (IsOpen && Keyboard.current.escapeKey.wasPressedThisFrame)
+            {
+                CloseInventory();
+                return;
+            }
+
+            if (IsOpen && Keyboard.current.rKey.wasPressedThisFrame)
+                RotateSelected();
 
             if (IsOpen && activeRecyclingMachine != null)
                 RefreshRecipeDetails();
@@ -133,47 +144,12 @@ namespace InventorySystem
 
         public void OpenInventory()
         {
-            if (inventory == null || casePanel == null)
-                return;
-
-            IsOpen = true;
-            if (shadePanel != null)
-                shadePanel.SetActive(true);
-            casePanel.SetActive(true);
-            UpdateLayoutForCurrentMode();
-
-            if (interactionText != null)
-                interactionText.gameObject.SetActive(false);
-            if (movement != null)
-                movement.SetInputLocked(true);
-
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            RefreshInventory();
-        }
-
-        public void CloseInventory()
-        {
-            IsOpen = false;
             activeSellTable = null;
             activeRecyclingMachine = null;
             selectedItem = null;
             selectedRecipeIndex = 0;
             craftAmount = 1;
-
-            if (recipePanelObject != null)
-                recipePanelObject.SetActive(false);
-            if (shadePanel != null)
-                shadePanel.SetActive(false);
-            if (casePanel != null)
-                casePanel.SetActive(false);
-            if (interactionText != null)
-                interactionText.gameObject.SetActive(true);
-            if (movement != null)
-                movement.SetInputLocked(false);
-
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            OpenView(inventoryView);
         }
 
         public void OpenSellMode(SellTable sellTable)
@@ -184,8 +160,9 @@ namespace InventorySystem
             activeSellTable = sellTable;
             activeRecyclingMachine = null;
             selectedItem = null;
+            selectedRecipeIndex = 0;
             craftAmount = 1;
-            OpenInventory();
+            OpenView(saleView);
         }
 
         public void OpenRecycleMode(RecyclingMachine machine)
@@ -198,88 +175,144 @@ namespace InventorySystem
             selectedItem = null;
             selectedRecipeIndex = machine.RecipeCount > 0 ? 0 : -1;
             craftAmount = 1;
-            OpenInventory();
+
+            SceneView view = machine.InterfaceCanvas == RecyclingMachine.FabricatorCanvas.Fabricadora2
+                ? fabricatorView2
+                : fabricatorView1;
+            OpenView(view);
         }
 
-        private void BindSceneButtons()
+        public void CloseInventory()
         {
-            if (minusButton != null)
-                minusButton.onClick.AddListener(DecreaseCraftAmount);
-            if (plusButton != null)
-                plusButton.onClick.AddListener(IncreaseCraftAmount);
-            if (actionButton != null)
-                actionButton.onClick.AddListener(ActionSelected);
+            IsOpen = false;
+            activeSellTable = null;
+            activeRecyclingMachine = null;
+            activeView = null;
+            selectedItem = null;
+            selectedRecipeIndex = 0;
+            craftAmount = 1;
 
-            if (inventoryCells != null)
+            SetViewActive(inventoryView, false);
+            SetViewActive(saleView, false);
+            SetViewActive(fabricatorView1, false);
+            SetViewActive(fabricatorView2, false);
+
+            if (interactionText != null)
+                interactionText.gameObject.SetActive(true);
+            if (movement != null)
+                movement.SetInputLocked(false);
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
+        private void OpenView(SceneView view)
+        {
+            if (inventory == null || view == null || view.canvasRoot == null)
+                return;
+
+            SetViewActive(inventoryView, false);
+            SetViewActive(saleView, false);
+            SetViewActive(fabricatorView1, false);
+            SetViewActive(fabricatorView2, false);
+
+            activeView = view;
+            SetViewActive(activeView, true);
+            IsOpen = true;
+
+            if (interactionText != null)
+                interactionText.gameObject.SetActive(false);
+            if (movement != null)
+                movement.SetInputLocked(true);
+
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            RefreshInventory();
+        }
+
+        private static void SetViewActive(SceneView view, bool active)
+        {
+            if (view != null && view.canvasRoot != null)
+                view.canvasRoot.SetActive(active);
+        }
+
+        private void BindSceneView(SceneView view)
+        {
+            if (view == null)
+                return;
+
+            if (view.closeButton != null)
+                view.closeButton.onClick.AddListener(CloseInventory);
+            if (view.minusButton != null)
+                view.minusButton.onClick.AddListener(DecreaseCraftAmount);
+            if (view.plusButton != null)
+                view.plusButton.onClick.AddListener(IncreaseCraftAmount);
+            if (view.actionButton != null)
+                view.actionButton.onClick.AddListener(ActionSelected);
+
+            if (view.inventoryCells != null)
             {
-                for (int i = 0; i < inventoryCells.Length; i++)
+                for (int i = 0; i < view.inventoryCells.Length; i++)
                 {
                     int cellIndex = i;
-                    if (inventoryCells[i] != null)
-                        inventoryCells[i].onClick.AddListener(() => ClickCell(cellIndex));
+                    if (view.inventoryCells[i] != null)
+                        view.inventoryCells[i].onClick.AddListener(() => ClickCell(cellIndex));
                 }
             }
 
-            if (recipeButtons != null)
+            if (view.recipeButtons != null)
             {
-                for (int i = 0; i < recipeButtons.Length; i++)
+                for (int i = 0; i < view.recipeButtons.Length; i++)
                 {
                     int recipeIndex = i;
-                    if (recipeButtons[i] != null)
-                        recipeButtons[i].onClick.AddListener(() => SelectRecipe(recipeIndex));
+                    if (view.recipeButtons[i] != null)
+                        view.recipeButtons[i].onClick.AddListener(() => SelectRecipe(recipeIndex));
                 }
             }
         }
 
         private void ValidateSceneUi()
         {
-            if (inventoryCells == null || inventoryCells.Length < inventory.Capacity)
-                Debug.LogWarning("InventoryUIController necesita las 16 celdas físicas de la escena.", this);
-            if (grid == null || casePanel == null || detailsText == null)
-                Debug.LogWarning("InventoryUIController tiene referencias de UI de escena incompletas.", this);
+            ValidateView(inventoryView, "Inventario");
+            ValidateView(saleView, "Venta");
+            ValidateView(fabricatorView1, "Fabricadora 1");
+            ValidateView(fabricatorView2, "Fabricadora 2");
+
+            if (interactionText == null)
+                Debug.LogWarning("Falta Interaction Message dentro del Canvas de Hotbar.", this);
         }
 
-        private void UpdateLayoutForCurrentMode()
+        private void ValidateView(SceneView view, string viewName)
         {
-            bool recycleMode = activeRecyclingMachine != null;
-            if (grid != null)
-                grid.anchoredPosition = recycleMode ? recycleGridPosition : normalGridPosition;
-
-            if (detailsPanelRect != null)
+            if (view == null || view.canvasRoot == null || view.inventoryCells == null ||
+                inventory == null || view.inventoryCells.Length < inventory.Capacity)
             {
-                detailsPanelRect.anchoredPosition = recycleMode
-                    ? recycleDetailsPosition
-                    : normalDetailsPosition;
-                detailsPanelRect.sizeDelta = detailsSize;
+                Debug.LogWarning("La vista física de " + viewName + " tiene referencias incompletas.", this);
             }
-
-            if (recipePanelObject != null)
-                recipePanelObject.SetActive(recycleMode);
         }
 
         private void RefreshInventory()
         {
-            if (!IsOpen || inventory == null || grid == null)
+            if (!IsOpen || inventory == null || activeView == null)
                 return;
 
-            UpdateLayoutForCurrentMode();
             if (!ContainsItem(selectedItem))
                 selectedItem = null;
 
-            RefreshCells();
             RefreshItemVisuals();
 
-            if (titleText != null)
+            if (activeView.titleText != null)
             {
                 int balance = wallet == null ? 0 : wallet.Balance;
-                titleText.text = "INVENTARIO  <color=#69c475>" + inventory.UsedCells + "/" +
+                activeView.titleText.text = "INVENTARIO  <color=#69c475>" + inventory.UsedCells + "/" +
                     inventory.Capacity + "</color>    <color=#f2d66a>¢ " + balance + "</color>";
             }
 
             if (activeRecyclingMachine != null)
             {
-                if (modeText != null)
-                    modeText.text = activeRecyclingMachine.StationName.ToUpperInvariant() + "  //  SELECCIONA UNA RECETA";
+                if (activeView.modeText != null)
+                    activeView.modeText.text = activeRecyclingMachine.StationName.ToUpperInvariant() +
+                        "  //  SELECCIONA UNA RECETA";
                 RefreshRecipeList();
                 RefreshRecipeDetails();
                 return;
@@ -287,130 +320,132 @@ namespace InventorySystem
 
             if (activeSellTable != null)
             {
-                if (modeText != null)
-                    modeText.text = activeSellTable.StationName.ToUpperInvariant() + "  //  SELECCIONA Y VENDE UN LOTE";
+                if (activeView.modeText != null)
+                    activeView.modeText.text = activeSellTable.StationName.ToUpperInvariant() +
+                        "  //  SELECCIONA Y VENDE UN LOTE";
                 RefreshSellUI();
                 return;
             }
 
-            if (modeText != null)
-                modeText.text = "MALETÍN DE RECUPERACIÓN  // TAB PARA CERRAR";
-            if (recipePanelObject != null)
-                recipePanelObject.SetActive(false);
-            if (actionButton != null)
-                actionButton.gameObject.SetActive(false);
+            if (activeView.modeText != null)
+                activeView.modeText.text = "MALETÍN DE RECUPERACIÓN  //  E PARA CERRAR";
+            if (activeView.actionButton != null)
+                activeView.actionButton.gameObject.SetActive(false);
             RefreshDetails();
-        }
-
-        private void RefreshCells()
-        {
-            if (inventoryCells == null)
-                return;
-
-            for (int i = 0; i < inventoryCells.Length; i++)
-            {
-                if (inventoryCells[i] == null)
-                    continue;
-
-                int x = i % inventory.Width;
-                int y = i / inventory.Width;
-                bool occupied = inventory.IsCellOccupied(new Vector2Int(x, y));
-                if (inventoryCellImages != null && i < inventoryCellImages.Length && inventoryCellImages[i] != null)
-                {
-                    inventoryCellImages[i].color = occupied
-                        ? new Color(0.10f, 0.13f, 0.12f, 1f)
-                        : new Color(0.16f, 0.19f, 0.18f, 1f);
-                }
-            }
         }
 
         private void RefreshItemVisuals()
         {
-            if (itemVisuals == null)
+            if (activeView.itemVisuals == null)
                 return;
 
-            for (int i = 0; i < itemVisuals.Length; i++)
+            for (int i = 0; i < activeView.itemVisuals.Length; i++)
             {
-                if (itemVisuals[i] != null)
-                    itemVisuals[i].gameObject.SetActive(false);
+                if (activeView.itemVisuals[i] != null)
+                    activeView.itemVisuals[i].gameObject.SetActive(false);
             }
 
             int visualIndex = 0;
             foreach (ItemInstance item in inventory.Items)
             {
-                if (visualIndex >= itemVisuals.Length)
+                if (visualIndex >= activeView.itemVisuals.Length)
                     break;
-                if (item == null || item.Definition == null || itemVisuals[visualIndex] == null)
+                if (item == null || item.Definition == null || activeView.itemVisuals[visualIndex] == null)
                     continue;
 
-                RectTransform visual = itemVisuals[visualIndex];
+                RectTransform visual = activeView.itemVisuals[visualIndex];
+                PlaceVisualOverPhysicalCells(activeView, item, visual);
                 visual.gameObject.SetActive(true);
-                visual.anchoredPosition = new Vector2(
-                    item.Position.x * (cellSize + cellGap),
-                    -item.Position.y * (cellSize + cellGap));
-                visual.sizeDelta = new Vector2(
-                    item.Size.x * cellSize + (item.Size.x - 1) * cellGap,
-                    item.Size.y * cellSize + (item.Size.y - 1) * cellGap);
 
-                if (itemImages != null && visualIndex < itemImages.Length && itemImages[visualIndex] != null)
-                    itemImages[visualIndex].color = ItemColor(item.Definition);
+                if (visualIndex < activeView.itemImages.Length && activeView.itemImages[visualIndex] != null)
+                    activeView.itemImages[visualIndex].color = ItemColor(item.Definition);
 
-                if (itemIcons != null && visualIndex < itemIcons.Length && itemIcons[visualIndex] != null)
+                if (visualIndex < activeView.itemIcons.Length && activeView.itemIcons[visualIndex] != null)
                 {
-                    itemIcons[visualIndex].sprite = item.Definition.Icon;
-                    itemIcons[visualIndex].enabled = item.Definition.Icon != null;
-                    itemIcons[visualIndex].color = Color.white;
+                    activeView.itemIcons[visualIndex].sprite = item.Definition.Icon;
+                    activeView.itemIcons[visualIndex].enabled = item.Definition.Icon != null;
+                    activeView.itemIcons[visualIndex].color = Color.white;
                 }
 
-                if (itemOutlines != null && visualIndex < itemOutlines.Length && itemOutlines[visualIndex] != null)
-                {
-                    itemOutlines[visualIndex].effectColor = item == selectedItem
-                        ? new Color(0.8f, 1f, 0.56f, 1f)
-                        : new Color(0.02f, 0.04f, 0.03f, 1f);
-                    itemOutlines[visualIndex].effectDistance = item == selectedItem
-                        ? new Vector2(3f, -3f)
-                        : new Vector2(1f, -1f);
-                }
+                if (visualIndex < activeView.itemOutlines.Length && activeView.itemOutlines[visualIndex] != null)
+                    activeView.itemOutlines[visualIndex].enabled = item == selectedItem;
 
-                if (itemLabels != null && visualIndex < itemLabels.Length && itemLabels[visualIndex] != null)
-                    itemLabels[visualIndex].text = item.Definition.ItemName.ToUpperInvariant();
+                if (visualIndex < activeView.itemLabels.Length && activeView.itemLabels[visualIndex] != null)
+                    activeView.itemLabels[visualIndex].text = item.Definition.ItemName.ToUpperInvariant();
 
-                if (itemCounts != null && visualIndex < itemCounts.Length && itemCounts[visualIndex] != null)
+                if (visualIndex < activeView.itemCounts.Length && activeView.itemCounts[visualIndex] != null)
                 {
-                    itemCounts[visualIndex].text = item.Amount > 1 ? "x" + item.Amount : string.Empty;
-                    itemCounts[visualIndex].gameObject.SetActive(item.Amount > 1);
+                    activeView.itemCounts[visualIndex].text = item.Amount > 1 ? "x" + item.Amount : string.Empty;
+                    activeView.itemCounts[visualIndex].gameObject.SetActive(item.Amount > 1);
                 }
 
                 visualIndex++;
             }
         }
 
+        private void PlaceVisualOverPhysicalCells(SceneView view, ItemInstance item, RectTransform visual)
+        {
+            int startIndex = item.Position.y * inventory.Width + item.Position.x;
+            if (view.inventoryCells == null || startIndex < 0 || startIndex >= view.inventoryCells.Length ||
+                view.inventoryCells[startIndex] == null)
+                return;
+
+            RectTransform first = view.inventoryCells[startIndex].transform as RectTransform;
+            if (first == null)
+                return;
+
+            visual.anchorMin = first.anchorMin;
+            visual.anchorMax = first.anchorMax;
+            visual.pivot = first.pivot;
+            visual.anchoredPosition = first.anchoredPosition;
+
+            float width = first.rect.width;
+            float height = first.rect.height;
+
+            int endX = item.Position.x + item.Size.x - 1;
+            int endY = item.Position.y + item.Size.y - 1;
+            if (endX < inventory.Width)
+            {
+                int endIndex = item.Position.y * inventory.Width + endX;
+                RectTransform last = endIndex < view.inventoryCells.Length && view.inventoryCells[endIndex] != null
+                    ? view.inventoryCells[endIndex].transform as RectTransform
+                    : null;
+                if (last != null)
+                    width = Mathf.Abs(last.anchoredPosition.x - first.anchoredPosition.x) + last.rect.width;
+            }
+
+            if (endY < inventory.Height)
+            {
+                int endIndex = endY * inventory.Width + item.Position.x;
+                RectTransform last = endIndex < view.inventoryCells.Length && view.inventoryCells[endIndex] != null
+                    ? view.inventoryCells[endIndex].transform as RectTransform
+                    : null;
+                if (last != null)
+                    height = Mathf.Abs(last.anchoredPosition.y - first.anchoredPosition.y) + last.rect.height;
+            }
+
+            visual.sizeDelta = new Vector2(width, height);
+        }
+
         private void RefreshRecipeList()
         {
-            if (recipeButtons == null || activeRecyclingMachine == null)
+            if (activeView.recipeButtons == null || activeRecyclingMachine == null)
                 return;
 
             int count = activeRecyclingMachine.RecipeCount;
-            for (int i = 0; i < recipeButtons.Length; i++)
+            for (int i = 0; i < activeView.recipeButtons.Length; i++)
             {
                 bool visible = i < count && activeRecyclingMachine.GetRecipe(i) != null;
-                if (recipeButtons[i] != null)
-                {
-                    recipeButtons[i].gameObject.SetActive(visible);
-                    if (visible)
-                    {
-                        Image image = recipeButtons[i].GetComponent<Image>();
-                        if (image != null)
-                            image.color = i == selectedRecipeIndex
-                                ? new Color(0.25f, 0.45f, 0.28f, 1f)
-                                : new Color(0.16f, 0.19f, 0.18f, 1f);
-                    }
-                }
+                if (activeView.recipeButtons[i] != null)
+                    activeView.recipeButtons[i].gameObject.SetActive(visible);
 
-                if (recipeButtonLabels != null && i < recipeButtonLabels.Length && recipeButtonLabels[i] != null)
-                    recipeButtonLabels[i].text = visible
+                if (i < activeView.recipeButtonLabels.Length && activeView.recipeButtonLabels[i] != null)
+                    activeView.recipeButtonLabels[i].text = visible
                         ? activeRecyclingMachine.GetRecipe(i).recipeName
                         : string.Empty;
+
+                if (i < activeView.recipeOutlines.Length && activeView.recipeOutlines[i] != null)
+                    activeView.recipeOutlines[i].enabled = visible && i == selectedRecipeIndex;
             }
         }
 
@@ -426,23 +461,23 @@ namespace InventorySystem
 
         private void RefreshRecipeDetails()
         {
-            if (activeRecyclingMachine == null || detailsText == null)
+            if (activeRecyclingMachine == null || activeView == null || activeView.detailsText == null)
                 return;
 
             RecyclingMachine.CraftingRecipe recipe = activeRecyclingMachine.GetRecipe(selectedRecipeIndex);
             if (recipe == null)
             {
-                if (infoTitle != null)
-                    infoTitle.text = "RECETA";
-                detailsText.text = "Selecciona una receta.";
-                if (actionButton != null)
-                    actionButton.gameObject.SetActive(false);
+                if (activeView.infoTitle != null)
+                    activeView.infoTitle.text = "RECETA";
+                activeView.detailsText.text = "Selecciona una receta.";
+                if (activeView.actionButton != null)
+                    activeView.actionButton.gameObject.SetActive(false);
                 UpdateQuantityText();
                 return;
             }
 
-            if (infoTitle != null)
-                infoTitle.text = recipe.recipeName.ToUpperInvariant();
+            if (activeView.infoTitle != null)
+                activeView.infoTitle.text = recipe.recipeName.ToUpperInvariant();
 
             string text = string.IsNullOrWhiteSpace(recipe.description) ? string.Empty : recipe.description + "\n\n";
             text += "<b>INGREDIENTES</b>\n";
@@ -472,22 +507,21 @@ namespace InventorySystem
             if (activeRecyclingMachine.IsProcessing)
                 text += "\n" + activeRecyclingMachine.StatusMessage;
 
-            detailsText.text = text;
+            activeView.detailsText.text = text;
             UpdateQuantityText();
             RefreshCraftButton(recipe);
         }
 
         private void RefreshCraftButton(RecyclingMachine.CraftingRecipe recipe)
         {
-            if (actionButton == null)
+            if (activeView.actionButton == null)
                 return;
 
-            actionButton.gameObject.SetActive(true);
-            actionButton.interactable = !activeRecyclingMachine.IsProcessing &&
+            activeView.actionButton.gameObject.SetActive(true);
+            activeView.actionButton.interactable = !activeRecyclingMachine.IsProcessing &&
                 activeRecyclingMachine.CanCraft(inventory, recipe, craftAmount);
-            Text buttonText = actionButton.GetComponentInChildren<Text>();
-            if (buttonText != null)
-                buttonText.text = activeRecyclingMachine.IsProcessing
+            if (activeView.actionButtonLabel != null)
+                activeView.actionButtonLabel.text = activeRecyclingMachine.IsProcessing
                     ? Mathf.RoundToInt(activeRecyclingMachine.Progress * 100f) + "%"
                     : "FABRICAR";
         }
@@ -532,8 +566,8 @@ namespace InventorySystem
 
         private void UpdateQuantityText()
         {
-            if (quantityText != null)
-                quantityText.text = craftAmount.ToString();
+            if (activeView != null && activeView.quantityText != null)
+                activeView.quantityText.text = craftAmount.ToString();
         }
 
         private void ActionSelected()
@@ -548,6 +582,7 @@ namespace InventorySystem
         {
             if (activeRecyclingMachine == null || selectedRecipeIndex < 0)
                 return;
+
             activeRecyclingMachine.TryStartCraft(inventory, selectedRecipeIndex, craftAmount);
             RefreshRecipeDetails();
         }
@@ -559,23 +594,23 @@ namespace InventorySystem
             else
                 craftAmount = Mathf.Clamp(craftAmount, 1, selectedItem.Amount);
 
-            if (minusButton != null)
-                minusButton.interactable = selectedItem != null && craftAmount > 1;
-            if (plusButton != null)
-                plusButton.interactable = selectedItem != null && craftAmount < (selectedItem == null ? 1 : selectedItem.Amount);
+            if (activeView.minusButton != null)
+                activeView.minusButton.interactable = selectedItem != null && craftAmount > 1;
+            if (activeView.plusButton != null)
+                activeView.plusButton.interactable = selectedItem != null && craftAmount < selectedItem.Amount;
 
             UpdateQuantityText();
 
-            if (actionButton != null)
+            if (activeView.actionButton != null)
             {
-                actionButton.gameObject.SetActive(selectedItem != null);
-                actionButton.interactable = selectedItem != null;
-                Text buttonText = actionButton.GetComponentInChildren<Text>();
-                if (buttonText != null)
-                    buttonText.text = selectedItem == null
-                        ? "VENDER LOTE"
-                        : "VENDER " + craftAmount;
+                activeView.actionButton.gameObject.SetActive(selectedItem != null);
+                activeView.actionButton.interactable = selectedItem != null;
             }
+            if (activeView.actionButtonLabel != null)
+                activeView.actionButtonLabel.text = selectedItem == null
+                    ? "VENDER LOTE"
+                    : "VENDER " + craftAmount;
+
             RefreshDetails();
         }
 
@@ -619,7 +654,10 @@ namespace InventorySystem
                 craftAmount = 1;
             }
             else
+            {
                 inventory.TryMoveItem(selectedItem, cell, selectedItem.Rotated);
+            }
+
             RefreshInventory();
         }
 
@@ -634,17 +672,17 @@ namespace InventorySystem
 
         private void RefreshDetails()
         {
-            if (detailsText == null)
+            if (activeView == null || activeView.detailsText == null)
                 return;
             if (selectedItem == null || selectedItem.Definition == null)
             {
-                detailsText.text = "Selecciona un objeto.";
+                activeView.detailsText.text = "Selecciona un objeto.";
                 return;
             }
 
             ItemDefinition item = selectedItem.Definition;
             string description = string.IsNullOrWhiteSpace(item.Description) ? "Sin descripción." : item.Description;
-            detailsText.text = "<b>" + item.ItemName + "</b>\n\n" +
+            activeView.detailsText.text = "<b>" + item.ItemName + "</b>\n\n" +
                 item.Category.ToString().ToUpperInvariant() + "\nID  " + item.ItemID + "\n\n" +
                 description + "\n\nTAMAÑO  " + selectedItem.Size.x + " × " + selectedItem.Size.y +
                 (item.Stackable ? "\nCANTIDAD  " + selectedItem.Amount + "/" + item.MaxStack : string.Empty);
@@ -654,11 +692,13 @@ namespace InventorySystem
         {
             if (item == null || inventory == null)
                 return false;
+
             foreach (ItemInstance candidate in inventory.Items)
             {
                 if (candidate == item)
                     return true;
             }
+
             return false;
         }
 
