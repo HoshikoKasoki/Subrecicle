@@ -187,5 +187,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterBuoyancy
   bodyCollider: {fileID: 5445525914551725894}
-  waterDamping: 2
+  waterDamping: 8
   waterAngularDamping: 1.5
+  sinkOffset: 0.05

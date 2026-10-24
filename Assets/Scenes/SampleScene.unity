@@ -2031,7 +2031,7 @@ Transform:
   m_GameObject: {fileID: 74022104}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8458.147, y: 33.42, z: -16.53574}
+  m_LocalPosition: {x: -8503.8, y: 30.6, z: 23.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13280,6 +13280,7 @@ MonoBehaviour:
   bodyCollider: {fileID: 452169265}
   waterDamping: 2
   waterAngularDamping: 1.5
+  sinkOffset: 0.1
 --- !u!54 &452169264
 Rigidbody:
   m_ObjectHideFlags: 0

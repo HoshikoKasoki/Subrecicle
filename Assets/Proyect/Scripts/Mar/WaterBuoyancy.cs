@@ -14,6 +14,10 @@ public class WaterBuoyancy : MonoBehaviour
     [Min(0f)] [SerializeField] private float waterDamping = 2f;
     [Min(0f)] [SerializeField] private float waterAngularDamping = 1.5f;
 
+    [Header("Ajuste de Hundimiento")]
+    [Tooltip("Qué tan hondo se sumerge la caja para que no flote tan arriba o parezca que vuela.")]
+    [SerializeField] private float sinkOffset = 0.1f;
+
     private Rigidbody rb;
     private WaterVolume currentWater;
     private float originalDamping;
@@ -69,8 +73,18 @@ public class WaterBuoyancy : MonoBehaviour
         float height = bounds.size.y;
         if (height < 0.0001f) return;
 
-        float submergedHeight = Mathf.Clamp(currentWater.SurfaceY - bounds.min.y, 0f, height);
-        if (submergedHeight <= 0f) return;
+        
+        float submergedHeight = Mathf.Clamp((currentWater.SurfaceY - sinkOffset) - bounds.min.y, 0f, height);
+        
+        if (submergedHeight <= 0f)
+        {
+            
+            if (rb.IsSleeping())
+            {
+                rb.WakeUp();
+            }
+            return;
+        }
 
         float submergedFraction = submergedHeight / height;
         float estimatedVolume = bounds.size.x * bounds.size.y * bounds.size.z;
@@ -104,6 +118,11 @@ public class WaterBuoyancy : MonoBehaviour
 #else
         return rb.angularDrag;
 #endif
+    }
+
+    private float GetSetDamping(float linear, float angular)
+    {
+        return linear;
     }
 
     private void SetDamping(float linear, float angular)
