@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb2bd034729c82e408fa886ed1dbd5ba, type: 3}
   m_Name: PlasticBottle
   m_EditorClassIdentifier: Assembly-CSharp::InventorySystem.ItemDefinition
+  worldPrefab: {fileID: 0}
   itemID: MAT-PLASTIC-001
   itemName: "Bidon pl\xE1stico"
   description: PET recuperable. Puede procesarse en filamento o piezas.
@@ -19,6 +20,6 @@ MonoBehaviour:
   size: {x: 2, y: 2}
   stackable: 0
   maxStack: 1
-  sellPrice: 5
+  sellPrice: 10
   icon: {fileID: 0}
   fallbackColor: {r: 0.18, g: 0.43, b: 0.49, a: 1}

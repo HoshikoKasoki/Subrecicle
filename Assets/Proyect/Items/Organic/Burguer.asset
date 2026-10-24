@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb2bd034729c82e408fa886ed1dbd5ba, type: 3}
+  m_Name: Burguer
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySystem.ItemDefinition
+  worldPrefab: {fileID: 6657141625845204269, guid: bc7333ece916a5c42a7a384594bcf41d, type: 3}
+  itemID: MAT-ORGANIC-004
+  itemName: Hamburguesa
+  description: Una hamburguesa vieja
+  category: 6
+  size: {x: 1, y: 1}
+  stackable: 1
+  maxStack: 4
+  sellPrice: 0
+  icon: {fileID: 0}
+  fallbackColor: {r: 0.8679245, g: 0.5275499, b: 0.2988608, a: 1}

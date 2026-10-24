@@ -20,6 +20,6 @@ MonoBehaviour:
   size: {x: 1, y: 1}
   stackable: 1
   maxStack: 12
-  sellPrice: 3
+  sellPrice: 6
   icon: {fileID: 0}
   fallbackColor: {r: 0.28, g: 0.38, b: 0.43, a: 1}
