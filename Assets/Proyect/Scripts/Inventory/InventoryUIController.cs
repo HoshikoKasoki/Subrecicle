@@ -116,8 +116,7 @@ namespace InventorySystem
                     : playerInventory.InteractionMessage;
             }
 
-            if (!IsOpen && Mouse.current != null &&
-                Mouse.current.rightButton.wasPressedThisFrame)
+           if (!IsOpen && Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
             {
                 DropSelectedHotbarItem();
             }
