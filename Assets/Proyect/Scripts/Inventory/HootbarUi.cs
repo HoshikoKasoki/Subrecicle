@@ -15,8 +15,13 @@ namespace InventorySystem
         [SerializeField] private Image[] slotBackgrounds;
         [SerializeField] private Image[] slotIcons;
         [SerializeField] private Text[] slotAmounts;
-        [SerializeField] private Outline[] selectionOutlines;
+        [SerializeField] private GameObject[] selectionObjects;
         [SerializeField] private GameObject crosshair;
+
+        [Header("Decoración Maleta / Bolso")]
+        [SerializeField] private Image backpackDecorationImage; // Componente Image de la maletita
+        [SerializeField] private Sprite backpackClosedSprite;   // Sprite de la maleta cerrada
+        [SerializeField] private Sprite backpackOpenSprite;     // Sprite de la maleta abierta
 
         [Header("Orden de dibujo")]
         [SerializeField] private int gameplaySortingOrder = 10;
@@ -29,6 +34,7 @@ namespace InventorySystem
         {
             hotbar = GetComponent<ToolHotbar>();
             inventoryUI = GetComponent<InventoryUIController>();
+
             if (hotbarCanvas == null && hotbarRoot != null)
                 hotbarCanvas = hotbarRoot.GetComponent<Canvas>();
 
@@ -38,8 +44,8 @@ namespace InventorySystem
                 slotButtons.Length < ToolHotbar.SlotCount || slotBackgrounds == null ||
                 slotBackgrounds.Length < ToolHotbar.SlotCount || slotIcons == null ||
                 slotIcons.Length < ToolHotbar.SlotCount || slotAmounts == null ||
-                slotAmounts.Length < ToolHotbar.SlotCount || selectionOutlines == null ||
-                selectionOutlines.Length < ToolHotbar.SlotCount)
+                slotAmounts.Length < ToolHotbar.SlotCount || selectionObjects == null ||
+                selectionObjects.Length < ToolHotbar.SlotCount)
                 Debug.LogWarning("ToolHotbarUI necesita referencias a la barra creada en la escena.", this);
         }
 
@@ -70,6 +76,19 @@ namespace InventorySystem
 
             if (crosshair != null)
                 crosshair.SetActive(!interfaceOpen);
+
+            // --- DECORACIÓN VISUAL DE LA MALETA ---
+            if (backpackDecorationImage != null)
+            {
+                if (interfaceOpen && backpackOpenSprite != null)
+                {
+                    backpackDecorationImage.sprite = backpackOpenSprite;
+                }
+                else if (!interfaceOpen && backpackClosedSprite != null)
+                {
+                    backpackDecorationImage.sprite = backpackClosedSprite;
+                }
+            }
 
             if (slotButtons == null)
                 return;
@@ -109,8 +128,8 @@ namespace InventorySystem
             int count = ToolHotbar.SlotCount;
             for (int i = 0; i < count; i++)
             {
-                if (selectionOutlines != null && i < selectionOutlines.Length && selectionOutlines[i] != null)
-                    selectionOutlines[i].enabled = i == hotbar.SelectedSlot;
+                if (selectionObjects != null && i < selectionObjects.Length && selectionObjects[i] != null)
+                    selectionObjects[i].SetActive(i == hotbar.SelectedSlot);
 
                 string itemId = hotbar.GetTool(i);
                 int amount = hotbar.GetAmount(i);
@@ -120,7 +139,7 @@ namespace InventorySystem
                 {
                     slotBackgrounds[i].color = definition != null && definition.Icon == null
                         ? definition.FallbackColor
-                        : new Color32(28, 35, 34, 225);
+                        : Color.white;
                 }
 
                 if (slotIcons != null && i < slotIcons.Length && slotIcons[i] != null)

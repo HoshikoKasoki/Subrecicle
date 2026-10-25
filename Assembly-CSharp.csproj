@@ -68,6 +68,7 @@
     <Compile Include="Assets\Proyect\Prefabs\Personaje\PlayerAnimationController.cs" />
     <Compile Include="Assets\Proyect\Scripts\Recolection\PickupItem.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
+    <Compile Include="Assets\Proyect\Scripts\Player\WaterZone.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
     <Compile Include="Assets\Proyect\Scripts\Mar\WaterBuoyancy.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
@@ -91,8 +92,10 @@
     <Compile Include="Assets\Proyect\Scripts\Player\Movement.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
+    <Compile Include="Assets\Proyect\Scripts\Condicion Victoria\GameManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
+    <Compile Include="Assets\Proyect\Scripts\Player\PlayerAnimationBridge.cs" />
     <Compile Include="Assets\Proyect\Scripts\Inventory\ItemInstance.cs" />
     <Compile Include="Assets\Proyect\Scripts\Inventory\Hootbar.cs" />
     <Compile Include="Assets\Proyect\Scripts\Audio\AmbienceSound.cs" />
