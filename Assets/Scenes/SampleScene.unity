@@ -1962,7 +1962,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 70522807}
   m_CullTransparentMesh: 1
-<<<<<<< HEAD
 --- !u!1 &74022104
 GameObject:
   m_ObjectHideFlags: 0
@@ -2008,9 +2007,6 @@ MonoBehaviour:
   gravedad: -10
   velocidadNado: 3
   velocidadBuceo: 2.5
-  alturaNormal: 2
-  alturaAgachado: 1
-  velocidadAgacharse: 5
   camara: {fileID: 330585546}
   sensibilidadMouse: 0.5
   limiteVertical: 89
@@ -2110,10 +2106,7 @@ Transform:
   m_LocalPosition: {x: -8452.82, y: 31.75, z: -11.81}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 330585546}
-  - {fileID: 423757539}
-  - {fileID: 223312846}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &74022112
@@ -2975,20 +2968,13 @@ MonoBehaviour:
   - {fileID: 227286086}
   - {fileID: 1851819439}
   - {fileID: 1870210672}
-  selectionOutlines:
-  - {fileID: 762937683}
-  - {fileID: 1383035478}
-  - {fileID: 841219148}
-  - {fileID: 720789211}
-  - {fileID: 1607454893}
-  - {fileID: 1995945778}
-  - {fileID: 250462278}
-  - {fileID: 735615642}
+  selectionObjects: []
   crosshair: {fileID: 1281621464}
+  backpackDecorationImage: {fileID: 0}
+  backpackClosedSprite: {fileID: 0}
+  backpackOpenSprite: {fileID: 0}
   gameplaySortingOrder: 10
   inventorySortingOrder: 40
-=======
->>>>>>> a123c300b35b7d41192618e3972a88d218ffc4e4
 --- !u!1 &75123596
 GameObject:
   m_ObjectHideFlags: 0
@@ -8009,7 +7995,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CambioDeAudio
   clipPasos: {fileID: 8300000, guid: 5a84a9951ec13e84fa22a668f0e1b0aa, type: 3}
-  player: {fileID: 0}
+  player: {fileID: 1274874228}
 --- !u!1 &266014630
 GameObject:
   m_ObjectHideFlags: 0
@@ -27876,7 +27862,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AmbienceSound
   Area: {fileID: 265032733}
-  Player: {fileID: 0}
+  Player: {fileID: 1274874228}
 --- !u!1 &957214971
 GameObject:
   m_ObjectHideFlags: 0
@@ -45725,7 +45711,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CambioDeAudio
   clipPasos: {fileID: 8300000, guid: 902370fdabbaafa45b41031e5f3d18c6, type: 3}
-  player: {fileID: 0}
+  player: {fileID: 1274874228}
 --- !u!1 &1668324411
 GameObject:
   m_ObjectHideFlags: 0
@@ -47620,7 +47606,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AmbienceSound
   Area: {fileID: 1663890575}
-  Player: {fileID: 0}
+  Player: {fileID: 1274874228}
 --- !u!4 &1738289338
 Transform:
   m_ObjectHideFlags: 0
@@ -54606,6 +54592,9 @@ MonoBehaviour:
   - {fileID: 406167483}
   - {fileID: 1745179684}
   crosshair: {fileID: 1281621464}
+  backpackDecorationImage: {fileID: 0}
+  backpackClosedSprite: {fileID: 0}
+  backpackOpenSprite: {fileID: 0}
   gameplaySortingOrder: 10
   inventorySortingOrder: 40
 --- !u!114 &1987262627
@@ -60599,3 +60588,4 @@ SceneRoots:
   - {fileID: 1611848416}
   - {fileID: 441335740}
   - {fileID: 185017657}
+  - {fileID: 74022111}
