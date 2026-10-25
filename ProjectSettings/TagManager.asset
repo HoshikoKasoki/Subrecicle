@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Basura
+  - Water
   layers:
   - Default
   - TransparentFX
@@ -12,7 +13,7 @@ TagManager:
   - Pickup
   - Water
   - UI
-  - 
+  - Player
   - 
   - 
   - 

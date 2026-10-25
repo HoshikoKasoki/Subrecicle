@@ -129,7 +129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySystem.PickupItem
   itemDefinition: {fileID: 11400000, guid: 66470e3e440314049b667c47c29ce598, type: 2}
   amount: 1
-  pickupDistance: 1
+  pickupDistance: 2.5
   animate: 0
   bobHeight: 0.12
   bobSpeed: 2
@@ -143,7 +143,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2876194617351504023}
   serializedVersion: 5
-  m_Mass: 5
+  m_Mass: 0.6
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -151,7 +151,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -161,7 +161,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &142687334454948037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,3 +177,4 @@ MonoBehaviour:
   bodyCollider: {fileID: 6375875994637044932}
   waterDamping: 2
   waterAngularDamping: 1.5
+  sinkOffset: 0.1
