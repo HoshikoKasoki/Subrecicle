@@ -99,6 +99,7 @@
     <Compile Include="Assets\Proyect\Scripts\Inventory\ItemInstance.cs" />
     <Compile Include="Assets\Proyect\Scripts\Inventory\Hootbar.cs" />
     <Compile Include="Assets\Proyect\Scripts\Audio\AmbienceSound.cs" />
+    <Compile Include="Assets\Proyect\Scripts\Player\EmoteController.cs" />
     <Compile Include="Assets\Proyect\Scripts\Crafting\RecyclingMachine.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\DropdownSample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />
