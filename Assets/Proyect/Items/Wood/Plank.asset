@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb2bd034729c82e408fa886ed1dbd5ba, type: 3}
   m_Name: Plank
   m_EditorClassIdentifier: Assembly-CSharp::InventorySystem.ItemDefinition
-  worldPrefab: {fileID: 0}
+  worldPrefab: {fileID: 3008889321580613161, guid: 16dcb674fded4f44face993e2b0061da, type: 3}
   itemID: MAT-WOOD-001
   itemName: Tabla de madera
   description: Una tabla de madera
