@@ -16,11 +16,6 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private float velocidadNado = 3f;
     [SerializeField] private float velocidadBuceo = 2.5f;
 
-    [Header("Agacharse")]
-    [SerializeField] private float alturaNormal = 1.8f;
-    [SerializeField] private float alturaAgachado = 1f;
-    [SerializeField] private float velocidadAgacharse = 10f;
-
     [Header("Cámara")]
     [SerializeField] private Transform camara;
     [SerializeField] private float sensibilidadMouse = 2f;
@@ -69,10 +64,6 @@ public class FirstPersonController : MonoBehaviour
         if (legacyCollider != null)
             legacyCollider.enabled = false;
 
-        controller.height = Mathf.Max(
-            alturaNormal,
-            controller.radius * 2f
-        );
 
         controller.center = Vector3.up * (controller.height * 0.5f);
 
@@ -89,7 +80,6 @@ public class FirstPersonController : MonoBehaviour
 
         Movimiento();
         Camara();
-        Agacharse();
     }
 
     private void Movimiento()
@@ -252,71 +242,6 @@ public class FirstPersonController : MonoBehaviour
             );
     }
 
-    private void Agacharse()
-    {
-        // Cambiar estado de agachado
-        if (Keyboard.current != null &&
-            Keyboard.current.leftCtrlKey.wasPressedThisFrame)
-        {
-            agachado = !agachado;
-        }
-
-        // =========================================================
-        // ALTURA DEL CHARACTER CONTROLLER
-        // =========================================================
-
-        float alturaObjetivo =
-            agachado
-                ? alturaAgachado
-                : alturaNormal;
-
-        controller.height = Mathf.Lerp(
-            controller.height,
-            alturaObjetivo,
-            velocidadAgacharse * Time.deltaTime
-        );
-
-        // =========================================================
-        // CENTER DEL CHARACTER CONTROLLER
-        // =========================================================
-        //
-        // Estos son EXACTAMENTE tus valores originales.
-        // Solo hacemos que lleguen suavemente a ellos.
-
-        Vector3 centerObjetivo =
-            agachado
-                ? new Vector3(0f, -0.5f, 0f)
-                : new Vector3(0f, 0f, 0f);
-
-        controller.center = Vector3.Lerp(
-            controller.center,
-            centerObjetivo,
-            velocidadAgacharse * Time.deltaTime
-        );
-
-        // =========================================================
-        // POSICIÓN DE LA CÁMARA
-        // =========================================================
-        //
-        // Agachado:
-        // Y = 0
-        //
-        // Normal:
-        // Y = 0.66
-        //
-        // Solo suavizamos la transición.
-
-        Vector3 posicionCamaraObjetivo =
-            agachado
-                ? new Vector3(0f, 0f, 0f)
-                : new Vector3(0f, 0.66f, 0f);
-
-        camara.localPosition = Vector3.Lerp(
-            camara.localPosition,
-            posicionCamaraObjetivo,
-            velocidadAgacharse * Time.deltaTime
-        );
-    }
 
     // =============================================================
     // INPUT SYSTEM
