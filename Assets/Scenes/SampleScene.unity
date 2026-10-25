@@ -1962,7 +1962,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 70522807}
   m_CullTransparentMesh: 1
-<<<<<<< HEAD
 --- !u!1 &74022104
 GameObject:
   m_ObjectHideFlags: 0
@@ -2987,8 +2986,6 @@ MonoBehaviour:
   crosshair: {fileID: 1281621464}
   gameplaySortingOrder: 10
   inventorySortingOrder: 40
-=======
->>>>>>> a123c300b35b7d41192618e3972a88d218ffc4e4
 --- !u!1 &75123596
 GameObject:
   m_ObjectHideFlags: 0
