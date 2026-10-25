@@ -18,6 +18,11 @@ namespace InventorySystem
         [SerializeField] private GameObject[] selectionObjects;
         [SerializeField] private GameObject crosshair;
 
+        [Header("Decoración Maleta / Bolso")]
+        [SerializeField] private Image backpackDecorationImage; // Componente Image de la maletita
+        [SerializeField] private Sprite backpackClosedSprite;   // Sprite de la maleta cerrada
+        [SerializeField] private Sprite backpackOpenSprite;     // Sprite de la maleta abierta
+
         [Header("Orden de dibujo")]
         [SerializeField] private int gameplaySortingOrder = 10;
         [SerializeField] private int inventorySortingOrder = 40;
@@ -29,6 +34,7 @@ namespace InventorySystem
         {
             hotbar = GetComponent<ToolHotbar>();
             inventoryUI = GetComponent<InventoryUIController>();
+
             if (hotbarCanvas == null && hotbarRoot != null)
                 hotbarCanvas = hotbarRoot.GetComponent<Canvas>();
 
@@ -70,6 +76,19 @@ namespace InventorySystem
 
             if (crosshair != null)
                 crosshair.SetActive(!interfaceOpen);
+
+            // --- DECORACIÓN VISUAL DE LA MALETA ---
+            if (backpackDecorationImage != null)
+            {
+                if (interfaceOpen && backpackOpenSprite != null)
+                {
+                    backpackDecorationImage.sprite = backpackOpenSprite;
+                }
+                else if (!interfaceOpen && backpackClosedSprite != null)
+                {
+                    backpackDecorationImage.sprite = backpackClosedSprite;
+                }
+            }
 
             if (slotButtons == null)
                 return;

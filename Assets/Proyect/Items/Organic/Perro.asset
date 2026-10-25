@@ -21,5 +21,5 @@ MonoBehaviour:
   stackable: 1
   maxStack: 4
   sellPrice: 0
-  icon: {fileID: 0}
-  fallbackColor: {r: 0.8962264, g: 0.60457176, b: 0.2494215, a: 1}
+  icon: {fileID: 21300000, guid: 721b54caa56bac34c89058a1b3a5b4ca, type: 3}
+  fallbackColor: {r: 0.9811321, g: 0.76350707, b: 0.31007475, a: 1}
