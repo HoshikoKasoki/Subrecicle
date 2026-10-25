@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb2bd034729c82e408fa886ed1dbd5ba, type: 3}
+  m_Name: Paper
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySystem.ItemDefinition
+  worldPrefab: {fileID: 1891793315611411088, guid: 716fc010ce8c29e489af38485e16b94f, type: 3}
+  itemID: MAT-PAPER-002
+  itemName: Hoja de papel
+  description: Una hoja de papel
+  category: 2
+  size: {x: 1, y: 1}
+  stackable: 0
+  maxStack: 1
+  sellPrice: 0
+  icon: {fileID: 0}
+  fallbackColor: {r: 1, g: 1, b: 1, a: 1}

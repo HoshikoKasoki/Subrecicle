@@ -339,7 +339,12 @@ public class FirstPersonController : MonoBehaviour
     public void SetInputLocked(bool locked)
     {
         inputLocked = locked;
-
+        if (pasos != null && pasos.isPlaying)
+            {
+                pasos.Pause();
+                pasos.pitch = 1.0f;
+            }
+            
         if (locked)
         {
             movimientoInput = Vector2.zero;
