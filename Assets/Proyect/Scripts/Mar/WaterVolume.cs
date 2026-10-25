@@ -54,6 +54,23 @@ public class WaterVolume : MonoBehaviour
         {
             buoyancy.EnterWater(this);
         }
+
+        FirstPersonController player =
+            other.GetComponentInParent<FirstPersonController>();
+
+        if (player != null)
+            player.EnterWater(this);
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        // También cubre al jugador si la escena comienza con él ya dentro
+        // del agua o si el volumen se activa durante la partida.
+        FirstPersonController player =
+            other.GetComponentInParent<FirstPersonController>();
+
+        if (player != null)
+            player.EnterWater(this);
     }
 
     private void OnTriggerExit(Collider other)
@@ -63,5 +80,11 @@ public class WaterVolume : MonoBehaviour
         {
             buoyancy.ExitWater(this);
         }
+
+        FirstPersonController player =
+            other.GetComponentInParent<FirstPersonController>();
+
+        if (player != null)
+            player.ExitWater(this);
     }
 }

@@ -127,7 +127,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5250253456023440360}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 2.5
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -197,7 +197,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySystem.PickupItem
   itemDefinition: {fileID: 11400000, guid: a42e2a7b26b21ea47b303ad25cb85648, type: 2}
   amount: 1
-  pickupDistance: 1
+  pickupDistance: 2.5
   animate: 0
   bobHeight: 0.12
   bobSpeed: 2

@@ -168,7 +168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySystem.PickupItem
   itemDefinition: {fileID: 11400000, guid: 126a13b8cb0a46118ea81d1554400002, type: 2}
   amount: 1
-  pickupDistance: 1
+  pickupDistance: 2.5
   animate: 0
   bobHeight: 0.12
   bobSpeed: 2

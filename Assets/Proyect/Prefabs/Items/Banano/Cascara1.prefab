@@ -129,7 +129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySystem.PickupItem
   itemDefinition: {fileID: 11400000, guid: 66470e3e440314049b667c47c29ce598, type: 2}
   amount: 1
-  pickupDistance: 1
+  pickupDistance: 2.5
   animate: 0
   bobHeight: 0.12
   bobSpeed: 2
@@ -143,7 +143,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7199309290797155244}
   serializedVersion: 5
-  m_Mass: 5
+  m_Mass: 3
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -151,7 +151,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
