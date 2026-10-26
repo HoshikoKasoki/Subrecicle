@@ -9845,7 +9845,7 @@ GameObject:
   - component: {fileID: 330585549}
   m_Layer: 0
   m_Name: Main Camera
-  m_TagString: MainCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -35021,10 +35021,9 @@ GameObject:
   - component: {fileID: 1234899271}
   - component: {fileID: 1234899270}
   - component: {fileID: 1234899269}
-  - component: {fileID: 1234899273}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -35147,22 +35146,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 20.895, y: -4.814, z: 0.466}
---- !u!114 &1234899273
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1234899268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cb938a4efa3591488b0f282ecbc0588, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CamaraMenuEfecto
-  velocidadRotacion: 0.2
-  anguloMaximo: 5
-  velocidadFlotacion: 0.5
-  alturaFlotacion: 0.1
 --- !u!1 &1240879665
 GameObject:
   m_ObjectHideFlags: 0
@@ -42646,7 +42629,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc60b11c6bcca214286512ec63714314, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuExpress
-  menuCamera: {fileID: 1234899268}
+  menuCamera: {fileID: 699793829}
   playerCamera: {fileID: 330585543}
   playerController: {fileID: 1987262632}
   mainCanvasUI: {fileID: 518197865}
