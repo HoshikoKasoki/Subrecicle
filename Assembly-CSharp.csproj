@@ -64,6 +64,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventHandler.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\EnvMapAnimator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
+    <Compile Include="Assets\Proyect\UI\Menu\CamaraMenuEfecto.cs" />
     <Compile Include="Assets\Proyect\Scripts\Mar\UnderwaterCameraEffect.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
     <Compile Include="Assets\Proyect\Scripts\Mar\WaterVolume.cs" />
@@ -76,6 +77,8 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
+    <Compile Include="Assets\Proyect\UI\Menu\EfectosLogoMarino.cs" />
+    <Compile Include="Assets\Proyect\UI\Menu\MainMenuExpress.cs" />
     <Compile Include="Assets\Proyect\Scripts\Inventory\InventoryUIController.cs" />
     <Compile Include="Assets\Proyect\Prefabs\Personaje\PlayerAnimationController.cs" />
     <Compile Include="Assets\Proyect\Scripts\Recolection\PickupItem.cs" />
