@@ -276,8 +276,8 @@ MonoBehaviour:
     y: 0
     width: 418
     height: 941
-  m_MinSize: {x: 276, y: 76}
-  m_MaxSize: {x: 4001, y: 4026}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 21}
   m_Panes:
   - {fileID: 21}
@@ -604,11 +604,12 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: []
+      m_SelectedIDs:
+      - m_Data: 47122
       m_LastClickedID:
         m_Data: 0
       m_ExpandedIDs:
-      - m_Data: -1910
+      - m_Data: -1340
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1285,9 +1286,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -8502.924, y: 30.470634, z: 23.039167}
+    m_Target: {x: -8496.4375, y: 9.678873, z: 61.304363}
     speed: 2
-    m_Value: {x: -8502.924, y: 30.470634, z: 23.039167}
+    m_Value: {x: -8496.4375, y: 9.678873, z: 61.304363}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1333,13 +1334,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.20971738, y: -0.33597302, z: 0.077005416, w: -0.9149939}
+    m_Target: {x: -0.23925793, y: 0.039890725, z: -0.009838396, w: -0.9700879}
     speed: 2
-    m_Value: {x: -0.20971708, y: -0.33597255, z: 0.077005304, w: -0.9149926}
+    m_Value: {x: -0.23925759, y: 0.03989067, z: -0.009838382, w: -0.9700865}
   m_Size:
-    m_Target: 4.641728
+    m_Target: 26.457394
     speed: 2
-    m_Value: 4.641728
+    m_Value: 26.457394
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -3612,16 +3613,17 @@ MonoBehaviour:
     m_IsLocked: 0
   m_LastLocalAssetsSearchArea: 1
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 72}
+    scrollPos: {x: 0, y: 79}
     m_SelectedIDs:
-    - m_Data: 55770
+    - m_Data: 55694
     m_LastClickedID:
-      m_Data: 55770
+      m_Data: 55694
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 55444
-    - m_Data: 55446
-    - m_Data: 55448
+    - m_Data: 55544
+    - m_Data: 55546
+    - m_Data: 55548
+    - m_Data: 55550
     - m_Data: 1000000000
     - m_Data: 2147483647
     m_RenameOverlay:
@@ -3656,9 +3658,10 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 55444
-    - m_Data: 55446
-    - m_Data: 55448
+    - m_Data: 55544
+    - m_Data: 55546
+    - m_Data: 55548
+    - m_Data: 55550
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -3685,8 +3688,9 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: []
-    m_LastClickedInstanceID: 0
+    m_SelectedInstanceIDs:
+    - m_Data: 47122
+    m_LastClickedInstanceID: 47122
     m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs:
     - m_Data: 55196
@@ -3799,7 +3803,7 @@ MonoBehaviour:
     m_DynamicPanelBehavior: 0
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 0
+  m_LastSelectedObjectID: 47122
 --- !u!114 &20
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -3931,7 +3935,7 @@ MonoBehaviour:
   m_SerializedViewNames:
   - UnityEditor.DeviceSimulation.SimulatorWindow
   m_SerializedViewValues:
-  - D:\proyectos nicol\Universidad\Semillero\JuegoCrafteo\Subrecicle\Library\PlayModeViewStates\687f6085233129b4a973e8a59d912d22
+  - D:\proyectos nicol\Universidad\Semillero\JuegoCrafteo\Subrecicle\Library\PlayModeViewStates\6aa2322a719de6a44a733845b226aac7
   m_PlayModeViewName: GameView
   m_ShowGizmos: 0
   m_TargetDisplay: 0
