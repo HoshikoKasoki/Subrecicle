@@ -9983,7 +9983,7 @@ MonoBehaviour:
   waterVolumes:
   - {fileID: 686018453}
   - {fileID: 1487550062}
-  startAboveSurface: 0.2
+  startAboveSurface: 2
   fullEffectBelowSurface: 0.13
   underwaterVolume: {fileID: 1031136500}
   fadeSpeed: 3
@@ -20893,7 +20893,7 @@ Transform:
   m_GameObject: {fileID: 686018451}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -13, z: -205.1}
+  m_LocalPosition: {x: 0, y: -11.4, z: -205.1}
   m_LocalScale: {x: 1139.8364, y: 27.56783, z: 220.55609}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -42075,7 +42075,7 @@ Transform:
   m_GameObject: {fileID: 1487550060}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -12.13, z: 12.9}
+  m_LocalPosition: {x: 0, y: -11.4, z: 12.9}
   m_LocalScale: {x: 1139.8364, y: 27.56783, z: 220.55609}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -58505,7 +58505,7 @@ MonoBehaviour:
   gravedad: -10
   velocidadNado: 3
   velocidadBuceo: 2.5
-  alturaActivacionNado: 0.65
+  alturaActivacionNado: 0.771
   margenCabezaSobreAgua: 0.25
   velocidadVerticalNado: 2.2
   fuerzaFlotacion: 3
