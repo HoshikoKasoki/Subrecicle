@@ -2,11 +2,22 @@ using UnityEngine;
 
 namespace InventorySystem
 {
-    /// <summary>Estación de venta: abre la mochila y compra el lote seleccionado.</summary>
     public class SellTable : MonoBehaviour
     {
         [SerializeField] private string stationName = "Mesa de recuperación";
         public string StationName => stationName;
+
+        [Header("Audio de Venta")]
+        [SerializeField] private AudioClip sellSound;
+        [SerializeField] private AudioSource audioSource;
+
+        private void Awake()
+        {
+            if (audioSource == null)
+            {
+                audioSource = GetComponent<AudioSource>();
+            }
+        }
 
         public bool TrySell(Inventory inventory, Wallet wallet, ItemInstance item, out int earned)
         {
@@ -29,6 +40,12 @@ namespace InventorySystem
             }
 
             wallet.AddFunds(earned);
+
+            if (sellSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(sellSound);
+            }
+
             return true;
         }
     }
