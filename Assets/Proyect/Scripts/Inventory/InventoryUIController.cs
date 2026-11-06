@@ -130,11 +130,11 @@ namespace InventorySystem
                 return;
             }
 
-            if (IsOpen && Keyboard.current.escapeKey.wasPressedThisFrame)
-            {
-                CloseInventory();
-                return;
-            }
+           // if (IsOpen && Keyboard.current.escapeKey.wasPressedThisFrame)
+            //{
+              //  CloseInventory();
+                //return;
+            //}
 
             if (IsOpen && Keyboard.current.rKey.wasPressedThisFrame)
                 RotateSelected();
