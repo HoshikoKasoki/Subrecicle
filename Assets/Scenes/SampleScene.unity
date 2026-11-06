@@ -50973,7 +50973,64 @@ MonoBehaviour:
   stationName: Fundidora
   interfaceCanvas: 1
   tiempoProcesamiento: 4
-  recipes: []
+  recipes:
+  - recipeName: Caja de Carton Reciclada
+    description: Producto crafteado de valor basico para vender en la tienda.
+    ingredients:
+    - item: {fileID: 11400000, guid: e61026f70feca61438a0e48f79fdfa70, type: 2}
+      amount: 2
+    outputs:
+    - item: {fileID: 11400000, guid: 4143e976cf05df2499f5e9d6b314bec6, type: 2}
+      amount: 1
+  - recipeName: Contenedor de Aluminio
+    description: Producto crafteado de valor medio para vender.
+    ingredients:
+    - item: {fileID: 11400000, guid: c708cf19adf587a40ae3f246aa0d64d7, type: 2}
+      amount: 1
+    outputs:
+    - item: {fileID: 11400000, guid: 5a905dfa25258b04fbc5f3eabca63d86, type: 2}
+      amount: 1
+  - recipeName: Mesa de Madera Ecologica
+    description: Mueble sostenible de alta calidad para decorar o vender en la tienda.
+    ingredients:
+    - item: {fileID: 11400000, guid: 39199724217773a42a5c72f5b70936f6, type: 2}
+      amount: 2
+    outputs:
+    - item: {fileID: 11400000, guid: 84f4e6ed487c4504f9bedad392fac175, type: 2}
+      amount: 1
+  - recipeName: Vidrio Soplado Decorativo
+    description: "Pieza artesanal de vidrio reciclado ideal para decoraci\xF3n o
+      venta."
+    ingredients:
+    - item: {fileID: 11400000, guid: b0379be544dbedb49a237db50abb8e53, type: 2}
+      amount: 1
+    - item: {fileID: 11400000, guid: 6ff4ebcea02d013499704e2c7442f276, type: 2}
+      amount: 1
+    outputs:
+    - item: {fileID: 11400000, guid: 7d0b271e02d74ae43818ef6e17df159a, type: 2}
+      amount: 1
+  - recipeName: Estructura Metalica
+    description: "Armaz\xF3n de soporte construido a partir de metales reciclados
+      y procesados."
+    ingredients:
+    - item: {fileID: 11400000, guid: 6583f90941605984e9aa8095ed0a7903, type: 2}
+      amount: 1
+    outputs:
+    - item: {fileID: 11400000, guid: 328240ab2cc1b6049a3b28dd77c76f9e, type: 2}
+      amount: 1
+  - recipeName: Kit de Reciclaje Completo
+    description: "Paquete avanzado de materiales recuperados para proyectos de ingenier\xEDa
+      y construcci\xF3n sostenible."
+    ingredients:
+    - item: {fileID: 11400000, guid: c708cf19adf587a40ae3f246aa0d64d7, type: 2}
+      amount: 1
+    - item: {fileID: 11400000, guid: fddb99667ed14ee4da98dd224e0a1c78, type: 2}
+      amount: 1
+    - item: {fileID: 11400000, guid: 6ff4ebcea02d013499704e2c7442f276, type: 2}
+      amount: 1
+    outputs:
+    - item: {fileID: 11400000, guid: 428dc71635efe8e48a26b6e1b1f76001, type: 2}
+      amount: 1
   audioSourceMaquina: {fileID: 0}
   sonidoFabricando: {fileID: 0}
   sonidoCompletado: {fileID: 0}
@@ -52682,14 +52739,72 @@ MonoBehaviour:
   interfaceCanvas: 0
   tiempoProcesamiento: 3.5
   recipes:
-  - recipeName: lata de metal
-    description: :3
+  - recipeName: Plastico Triturado
+    description: Transforma botellas de plastico usadas en material triturado reutilizable
     ingredients:
-    - item: {fileID: 0}
-      amount: 0
+    - item: {fileID: 11400000, guid: 126a13b8cb0a46118ea81d1554400002, type: 2}
+      amount: 2
     outputs:
-    - item: {fileID: 0}
-      amount: 0
+    - item: {fileID: 11400000, guid: 126a13b8cb0a46118ea81d1554400002, type: 2}
+      amount: 1
+  - recipeName: Lingote de Aluminio
+    description: Material base refinado para contenedores y estructuras
+    ingredients:
+    - item: {fileID: 11400000, guid: 7854a6bcfa034b1fa6bcc90845fb0001, type: 2}
+      amount: 2
+    outputs:
+    - item: {fileID: 11400000, guid: c708cf19adf587a40ae3f246aa0d64d7, type: 2}
+      amount: 1
+  - recipeName: Lingote de Aluminio
+    description: Material base refinado para contenedores y estructuras
+    ingredients:
+    - item: {fileID: 11400000, guid: 57458601dd9d433438a29485913d1254, type: 2}
+      amount: 2
+    outputs:
+    - item: {fileID: 11400000, guid: c708cf19adf587a40ae3f246aa0d64d7, type: 2}
+      amount: 1
+  - recipeName: Lingote de Metal
+    description: Material base refinado para contenedores y estructuras
+    ingredients:
+    - item: {fileID: 11400000, guid: 169fd5f7bcfe8e6458f557552d627a82, type: 2}
+      amount: 2
+    outputs:
+    - item: {fileID: 11400000, guid: 6583f90941605984e9aa8095ed0a7903, type: 2}
+      amount: 1
+  - recipeName: Polvo De Vidrio
+    description: "Material base refinado para artesan\xEDas de vidrio y decoraci\xF3n."
+    ingredients:
+    - item: {fileID: 11400000, guid: 050c93e2647b0d1418e5cbdfefd3a0c8, type: 2}
+      amount: 2
+    outputs:
+    - item: {fileID: 11400000, guid: b0379be544dbedb49a237db50abb8e53, type: 2}
+      amount: 1
+  - recipeName: Pulpa De Papel
+    description: Material triturado y procesado para la fabricacion de nuevos productos
+      de papel.
+    ingredients:
+    - item: {fileID: 11400000, guid: fddb99667ed14ee4da98dd224e0a1c78, type: 2}
+      amount: 3
+    outputs:
+    - item: {fileID: 11400000, guid: e61026f70feca61438a0e48f79fdfa70, type: 2}
+      amount: 1
+  - recipeName: Pulpa De Papel
+    description: Material triturado y procesado para la fabricacion de nuevos productos
+      de papel.
+    ingredients:
+    - item: {fileID: 11400000, guid: 4143e976cf05df2499f5e9d6b314bec6, type: 2}
+      amount: 2
+    outputs:
+    - item: {fileID: 11400000, guid: e61026f70feca61438a0e48f79fdfa70, type: 2}
+      amount: 1
+  - recipeName: Tabla de Madera Pulida
+    description: "Madera tratada y pulida para construcciones y acabados ecol\xF3gicos."
+    ingredients:
+    - item: {fileID: 11400000, guid: ab22de3e265b54743904063f9a8a74af, type: 2}
+      amount: 1
+    outputs:
+    - item: {fileID: 11400000, guid: 39199724217773a42a5c72f5b70936f6, type: 2}
+      amount: 1
   audioSourceMaquina: {fileID: 1836639950}
   sonidoFabricando: {fileID: 8300000, guid: 3b4b27a8a3d4ca4409aabbbc2d3c0322, type: 3}
   sonidoCompletado: {fileID: 8300000, guid: 9466b6d16528920428d21c3c1d34ce60, type: 3}
