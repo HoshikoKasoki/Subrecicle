@@ -13,6 +13,8 @@ public class MainMenuExpress : MonoBehaviour
 
     private bool isGameStarted = false; // 👈 Bandera para saber si ya le diste a JUGAR
 
+    public bool IsGameStarted => isGameStarted;
+
     private void Start()
     {
         isGameStarted = false;

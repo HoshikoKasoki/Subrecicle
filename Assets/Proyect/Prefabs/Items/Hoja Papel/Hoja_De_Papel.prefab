@@ -113,7 +113,7 @@ MonoBehaviour:
   bobHeight: 0.12
   bobSpeed: 2
   rotationSpeed: 65
-  sonidoRecoger: {fileID: 0}
+  sonidoRecoger: {fileID: 8300000, guid: 060ec3878509f7641b430454a244ab7b, type: 3}
 --- !u!65 &8905451390952992503
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -134,7 +134,7 @@ MonoBehaviour:
   bobHeight: 0.12
   bobSpeed: 2
   rotationSpeed: 65
-  sonidoRecoger: {fileID: 0}
+  sonidoRecoger: {fileID: 8300000, guid: 8a41d501aa910d1428ce2e4e1bffbb21, type: 3}
 --- !u!54 &5659955592180816576
 Rigidbody:
   m_ObjectHideFlags: 0
