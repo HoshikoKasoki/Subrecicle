@@ -11,7 +11,7 @@ public class MainMenuExpress : MonoBehaviour
     public GameObject mainCanvasUI;
     public GameObject hotbarUI;
 
-    private bool isGameStarted = false; // 👈 Bandera para saber si ya le diste a JUGAR
+    private bool isGameStarted = false; 
 
     public bool IsGameStarted => isGameStarted;
 
@@ -35,7 +35,7 @@ public class MainMenuExpress : MonoBehaviour
 
     private void Update()
     {
-        // 🎯 Si el juego NO ha empezado, forzamos en cada frame que el cursor siga visible y suelto
+
         if (!isGameStarted)
         {
             LiberarCursor();
@@ -44,7 +44,7 @@ public class MainMenuExpress : MonoBehaviour
 
     public void StartGame()
     {
-        isGameStarted = true; // 👈 Marcamos que el juego ya empezó
+        isGameStarted = true; 
 
         if (mainCanvasUI != null) mainCanvasUI.SetActive(false);
 

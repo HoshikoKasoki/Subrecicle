@@ -16,7 +16,6 @@ public class EfectosLogoMarino : MonoBehaviour
     public float intervaloEntreDestellos = 4.0f;
     public float duracionDestello = 0.8f;
 
-    // ⚪ Blanco con 50% de transparencia
     public Color colorDestelloBlanco = new Color(1f, 1f, 1f, 0.5f);
 
     private RectTransform rectLogo;
@@ -33,11 +32,10 @@ public class EfectosLogoMarino : MonoBehaviour
             rectDestello = imagenDestello.GetComponent<RectTransform>();
             imagenDestello.color = colorDestelloBlanco;
 
-            // 🎯 ESCONDER LA BARRITA FUERA DE PANTALLA DESDE EL SEGUNDO 0
+
             float anchoLogo = rectLogo.rect.width;
             rectDestello.anchoredPosition = new Vector2(-anchoLogo * 1.5f, rectDestello.anchoredPosition.y);
 
-            // Apagamos la imagen para que ni siquiera renderice mientras espera
             imagenDestello.enabled = false;
         }
     }
