@@ -66,14 +66,14 @@ public class EfectosLogoMarino : MonoBehaviour
 
         while (true)
         {
-            // Mantiene la barra oculta durante el tiempo de espera
+           
             if (imagenDestello != null) imagenDestello.enabled = false;
 
             yield return new WaitForSeconds(intervaloEntreDestellos);
 
             if (rectDestello != null && imagenDestello != null)
             {
-                // Encendemos la barra justo cuando va a cruzar
+              
                 imagenDestello.enabled = true;
 
                 float tiempoTranscurrido = 0f;
@@ -89,7 +89,7 @@ public class EfectosLogoMarino : MonoBehaviour
                     yield return null;
                 }
 
-                // Al terminar de pasar, se esconde y apaga
+
                 rectDestello.anchoredPosition = new Vector2(posicionInicioX, rectDestello.anchoredPosition.y);
                 imagenDestello.enabled = false;
             }
